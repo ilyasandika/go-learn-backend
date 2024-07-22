@@ -1,76 +1,74 @@
 {
-  "openapi": "3.0.3",
-  "info": {
-    "title": "PW II Education Web API Spec",
-    "description": "Education Web API Specification for UAS Pemrograman Web II",
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "https/localhost:8080/api"
-    }
-  ],
-  "paths": {
-    "/user": {
-      "get": {
-        "tags": [
-          "User API's"
-        ],
-        "description": "Get all users",
-        "summary": "Get all users",
-        "responses": {
-          "200": {
-            "description": "Successfully get all users",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer"
-                    },
-                    "status": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/userResponse"
-                      }
+    "openapi": "3.0.3",
+    "info": {
+        "title": "PW II Education Web API Spec",
+        "description": "Education Web API Specification for UAS Pemrograman Web II",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https/localhost:8080/api"
+        }
+    ],
+    "paths": {
+        "/user": {
+            "get": {
+                "tags": ["User API's"],
+                "description": "Get all users",
+                "summary": "Get all users",
+                "responses": {
+                    "200": {
+                        "description": "Successfully get all users",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/userResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                  }
                 }
-              }
             }
-          }
         }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "userResponse" : {
-        "type": "object",
-        "properties": {
-          "id" : {
-            "type": "integer"
-          },
-          "username" : {
-            "type": "string"
-          },
-          "role" : {
-            "type": "string"
-          },
-          "created_at" : {
-            "type": "string",
-            "format": "datetime"
-          },
-          "updated_at" : {
-            "type": "string",
-            "format": "datetime"
-          }
+    },
+    "components": {
+        "schemas": {
+            "userResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "datetime"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "datetime"
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
