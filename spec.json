@@ -13,7 +13,9 @@
     "paths": {
         "/users": {
             "get": {
-                "tags": ["User API"],
+                "tags": [
+                    "User API"
+                ],
                 "description": "Get all users",
                 "summary": "Get all users",
                 "responses": {
@@ -44,7 +46,9 @@
                 }
             },
             "post": {
-                "tags": ["User API"],
+                "tags": [
+                    "User API"
+                ],
                 "description": "Create a new user",
                 "summary": "Create a new user",
                 "requestBody": {
@@ -84,17 +88,21 @@
         },
         "/users/{userID}": {
             "get": {
-                "tags": ["User API"],
+                "tags": [
+                    "User API"
+                ],
                 "description": "Get a user by ID",
                 "summary": "Get a user by ID",
-                "parameters": [{
-                    "name": "userID",
-                    "in": "path",
-                    "required": true,
-                    "schema": {
-                        "type": "integer"
+                "parameters": [
+                    {
+                        "name": "userID",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
-                }],
+                ],
                 "responses": {
                     "200": {
                         "description": "Successfully get a user by ID",
@@ -120,17 +128,21 @@
                 }
             },
             "patch": {
-                "tags": ["User API"],
+                "tags": [
+                    "User API"
+                ],
                 "description": "Update a user by ID",
                 "summary": "Update a user by ID",
-                "parameters": [{
-                    "name": "userID",
-                    "in": "path",
-                    "required": true,
-                    "schema": {
-                        "type": "integer"
+                "parameters": [
+                    {
+                        "name": "userID",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
-                }],
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -166,20 +178,220 @@
                 }
             },
             "delete": {
-                "tags": ["User API"],
+                "tags": [
+                    "User API"
+                ],
                 "description": "Delete a user by ID",
                 "summary": "Delete a user by ID",
-                "parameters": [{
-                    "name": "userID",
-                    "in": "path",
-                    "required": true,
-                    "schema": {
-                        "type": "integer"
+                "parameters": [
+                    {
+                        "name": "userID",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
-                }],
+                ],
                 "responses": {
                     "200": {
                         "description": "Successfully deleted a user by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/deleteResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user_profiles": {
+            "get": {
+                "tags": [
+                    "User Profile API"
+                ],
+                "description": "Get all user profiles",
+                "summary": "Get all user profiles",
+                "responses": {
+                    "200": {
+                        "description": "Successfully get all user profiles",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/userProfileResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "User Profile API"
+                ],
+                "description": "Create a new user profile",
+                "summary": "Create a new user profile",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/userProfileCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully created a new user profile",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/userProfileResponse"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user_profiles/{profileID}": {
+            "get": {
+                "tags": [
+                    "User Profile API"
+                ],
+                "description": "Get a user profile by ID",
+                "summary": "Get a user profile by ID",
+                "parameters": [
+                    {
+                        "name": "profileID",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully get a user profile by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/userProfileResponse"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "User Profile API"
+                ],
+                "description": "Update a user profile by ID",
+                "summary": "Update a user profile by ID",
+                "parameters": [
+                    {
+                        "name": "profileID",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/userProfileUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated a user profile by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/userProfileResponse"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "User Profile API"
+                ],
+                "description": "Delete a user profile by ID",
+                "summary": "Delete a user profile by ID",
+                "parameters": [
+                    {
+                        "name": "profileID",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted a user profile by ID",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -208,11 +420,11 @@
                     },
                     "created_at": {
                         "type": "string",
-                        "format": "datetime"
+                        "format": "date-time"
                     },
                     "updated_at": {
                         "type": "string",
-                        "format": "datetime"
+                        "format": "date-time"
                     }
                 }
             },
@@ -240,6 +452,99 @@
                         "type": "string"
                     },
                     "role": {
+                        "type": "string"
+                    }
+                }
+            },
+
+            "userProfileResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "type": "integer"
+                    },
+                    "full_name": {
+                        "type": "string"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "enum": ["male", "female"]
+                    },
+                    "birthdate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "phone_number": {
+                        "type": "string"
+                    },
+                    "address": {
+                        "type": "string"
+                    },
+                    "profile_photo_path": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "userProfileCreate": {
+                "type": "object",
+                "properties": {
+                    "user_id": {
+                        "type": "integer"
+                    },
+                    "full_name": {
+                        "type": "string"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "enum": ["male", "female"]
+                    },
+                    "birthdate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "phone_number": {
+                        "type": "string"
+                    },
+                    "address": {
+                        "type": "string"
+                    },
+                    "profile_photo_path": {
+                        "type": "string"
+                    }
+                }
+            },
+            "userProfileUpdate": {
+                "type": "object",
+                "properties": {
+                    "full_name": {
+                        "type": "string"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "enum": ["male", "female"]
+                    },
+                    "birthdate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "phone_number": {
+                        "type": "string"
+                    },
+                    "address": {
+                        "type": "string"
+                    },
+                    "profile_photo_path": {
                         "type": "string"
                     }
                 }
