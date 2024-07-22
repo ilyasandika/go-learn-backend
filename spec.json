@@ -11,7 +11,7 @@
         }
     ],
     "paths": {
-        "/user": {
+        "/users": {
             "get": {
                 "tags": ["User API"],
                 "description": "Get all users",
@@ -82,7 +82,7 @@
                 }
             }
         },
-        "/user/{userID}": {
+        "/users/{userID}": {
             "get": {
                 "tags": ["User API"],
                 "description": "Get a user by ID",
