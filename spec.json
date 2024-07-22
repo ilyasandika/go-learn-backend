@@ -554,7 +554,190 @@
                     }
                 }
             }
-        }
+        },
+
+        "/social_media_types": {
+            "get": {
+                "tags": ["Social Media Type API"],
+                "description": "Get all social media types",
+                "summary": "Get all social media types",
+                "responses": {
+                    "200": {
+                        "description": "Successfully get all social media types",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/socialMediaTypeResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Social Media Type API"],
+                "description": "Create a new social media type",
+                "summary": "Create a new social media type",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/socialMediaTypeCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully created a new social media type",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/socialMediaTypeResponse"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/social_media_types/{typeID}": {
+            "get": {
+                "tags": ["Social Media Type API"],
+                "description": "Get a social media type by ID",
+                "summary": "Get a social media type by ID",
+                "parameters": [{
+                    "name": "typeID",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "integer"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully get a social media type by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/socialMediaTypeResponse"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": ["Social Media Type API"],
+                "description": "Update a social media type by ID",
+                "summary": "Update a social media type by ID",
+                "parameters": [{
+                    "name": "typeID",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "integer"
+                    }
+                }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/socialMediaTypeUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated a social media type by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/socialMediaTypeResponse"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Social Media Type API"],
+                "description": "Delete a social media type by ID",
+                "summary": "Delete a social media type by ID",
+                "parameters": [{
+                    "name": "typeID",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "integer"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted a social media type by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/deleteResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+
     },
     "components": {
         "schemas": {
@@ -739,8 +922,7 @@
                     "path": {
                         "type": "string"
                     }
-                },
-                "required": ["user_id", "type", "path"]
+                }
             },
             "socialMediaUpdate": {
                 "type": "object",
@@ -754,7 +936,51 @@
                 }
             },
 
-
+            "socialMediaTypeResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "logo_path": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "socialMediaTypeCreate": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "logo_path": {
+                        "type": "string"
+                    }
+                },
+                "required": ["name"]
+            },
+            "socialMediaTypeUpdate": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "logo_path": {
+                        "type": "string"
+                    }
+                }
+            },
 
             "deleteResponse" : {
                 "type": "object",
