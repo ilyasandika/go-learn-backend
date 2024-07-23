@@ -1,0 +1,40 @@
+### Get All User
+GET http://localhost:3000/api/users
+Accept: application/json
+###
+
+### Create a new user
+POST http://localhost:3000/api/users
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "user5",
+    "password": "password1",
+    "role": "user"
+}
+###
+
+### Get User By ID
+GET http://localhost:3000/api/users/10
+Accept: application/json
+###
+
+
+### Update user by ID
+PUT http://localhost:3000/api/users/10
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "Updated Name",
+    "password": "password1",
+    "role": "user"
+}
+###
+
+### Delete a User By ID
+DELETE http://localhost:3000/api/users/12
+Accept: application/json
+###
+
