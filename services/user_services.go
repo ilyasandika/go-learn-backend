@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"database/sql"
+	"github.com/go-playground/validator/v10"
 	"uaspw2/exception"
 	"uaspw2/helper"
 	"uaspw2/model/entity"
@@ -21,16 +22,21 @@ type UserService interface {
 type UserServiceImpl struct {
 	UserRepository repository.UserRepository
 	DB             *sql.DB
+	validate       *validator.Validate
 }
 
-func NewUserService(userRepository repository.UserRepository, db *sql.DB) UserService {
+func NewUserService(userRepository repository.UserRepository, db *sql.DB, validate *validator.Validate) UserService {
 	return &UserServiceImpl{
 		UserRepository: userRepository,
 		DB:             db,
+		validate:       validate,
 	}
 }
 
 func (service *UserServiceImpl) Create(ctx context.Context, request web.UserCreateRequest) web.UserResponse {
+	err := service.validate.Struct(request)
+	helper.PanicIfErr(err)
+
 	tx, err := service.DB.Begin()
 	helper.PanicIfErr(err)
 	defer helper.CommitOrRollback(tx)
@@ -40,6 +46,12 @@ func (service *UserServiceImpl) Create(ctx context.Context, request web.UserCrea
 		Password: request.Password,
 		Role:     request.Role,
 	}
+
+	hashedPassword, err := helper.HashPassword(user.Password)
+	helper.PanicIfErr(err)
+
+	user.Password = hashedPassword
+
 	lastInsertID := service.UserRepository.Create(ctx, tx, user)
 
 	user, _ = service.UserRepository.FindByID(ctx, tx, lastInsertID)
@@ -48,6 +60,9 @@ func (service *UserServiceImpl) Create(ctx context.Context, request web.UserCrea
 }
 
 func (service *UserServiceImpl) Update(ctx context.Context, request web.UserUpdateRequest) web.UserResponse {
+	err := service.validate.Struct(request)
+	helper.PanicIfErr(err)
+
 	tx, err := service.DB.Begin()
 	helper.PanicIfErr(err)
 	defer helper.CommitOrRollback(tx)
@@ -59,8 +74,13 @@ func (service *UserServiceImpl) Update(ctx context.Context, request web.UserUpda
 	}
 
 	user.Username = request.Username
-	user.Password = request.Password
 	user.Role = request.Role
+
+	if request.Password != "" {
+		hashedPassword, err := helper.HashPassword(request.Password)
+		helper.PanicIfErr(err)
+		user.Password = hashedPassword
+	}
 
 	user = service.UserRepository.Update(ctx, tx, user)
 	return helper.ToUserResponse(user)
