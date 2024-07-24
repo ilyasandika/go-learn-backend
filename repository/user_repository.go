@@ -49,14 +49,14 @@ func (repository *UserRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, id
 }
 
 func (repository *UserRepositoryImpl) FindByID(ctx context.Context, tx *sql.Tx, id int) (entity.User, error) {
-	SQL := `SELECT id, username, role, created_at, updated_at FROM users WHERE id = ?`
+	SQL := `SELECT id, username, password, role, created_at, updated_at FROM users WHERE id = ?`
 	row, err := tx.QueryContext(ctx, SQL, id)
 	helper.PanicIfErr(err)
 	defer row.Close()
 
 	user := entity.User{}
 	if row.Next() {
-		err := row.Scan(&user.Id, &user.Username, &user.Role, &user.CreatedAt, &user.UpdatedAt)
+		err := row.Scan(&user.Id, &user.Username, &user.Password, &user.Role, &user.CreatedAt, &user.UpdatedAt)
 		helper.PanicIfErr(err)
 		return user, nil
 	} else {
