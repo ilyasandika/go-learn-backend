@@ -5,15 +5,22 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
+	recover2 "github.com/gofiber/fiber/v2/middleware/recover"
 	"time"
 	"uaspw2/controller"
+	"uaspw2/exception"
 	"uaspw2/repository"
 	"uaspw2/routes"
 	"uaspw2/services"
 )
 
 func main() {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		ErrorHandler: exception.ErrorHandler,
+	})
+
+	app.Use(recover2.New())
+
 	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/uaspw2")
 	if err != nil {
 		log.Fatalf("Error opening database connection: %v", err)
