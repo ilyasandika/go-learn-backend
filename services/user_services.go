@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"database/sql"
+	"uaspw2/exception"
 	"uaspw2/helper"
 	"uaspw2/model/entity"
 	"uaspw2/repository"
@@ -54,7 +55,7 @@ func (service *UserServiceImpl) Update(ctx context.Context, request web.UserUpda
 	var user entity.User
 	user, err = service.UserRepository.FindByID(ctx, tx, request.Id)
 	if err != nil {
-		panic(err.Error())
+		panic(exception.NewNotFoundError(err.Error()))
 	}
 
 	user.Username = request.Username
@@ -73,7 +74,7 @@ func (service *UserServiceImpl) Delete(ctx context.Context, id int) {
 	var user entity.User
 	user, err = service.UserRepository.FindByID(ctx, tx, id)
 	if err != nil {
-		panic(err.Error())
+		panic(exception.NewNotFoundError(err.Error()))
 	}
 
 	service.UserRepository.Delete(ctx, tx, user.Id)
@@ -87,7 +88,7 @@ func (service *UserServiceImpl) FindByID(ctx context.Context, id int) web.UserRe
 	var user entity.User
 	user, err = service.UserRepository.FindByID(ctx, tx, id)
 	if err != nil {
-		panic(err.Error())
+		panic(exception.NewNotFoundError(err.Error()))
 	}
 	return helper.ToUserResponse(user)
 }
