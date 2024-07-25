@@ -9,7 +9,6 @@ import (
 )
 
 type UserRepository interface {
-	Create(ctx context.Context, tx *sql.Tx, user entity.User) int
 	Update(ctx context.Context, tx *sql.Tx, user entity.User) entity.User
 	Delete(ctx context.Context, tx *sql.Tx, id int)
 	FindByID(ctx context.Context, tx *sql.Tx, id int) (entity.User, error)
@@ -21,17 +20,6 @@ type UserRepositoryImpl struct {
 
 func NewUserRepository() UserRepository {
 	return &UserRepositoryImpl{}
-}
-
-func (repository *UserRepositoryImpl) Create(ctx context.Context, tx *sql.Tx, user entity.User) int {
-	SQL := `INSERT INTO users (username, password, role) VALUES (?, ?, ?)`
-	result, err := tx.ExecContext(ctx, SQL, &user.Username, &user.Password, &user.Role)
-	helper.PanicIfErr(err)
-
-	id, err := result.LastInsertId()
-	helper.PanicIfErr(err)
-
-	return int(id)
 }
 
 func (repository *UserRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, user entity.User) entity.User {

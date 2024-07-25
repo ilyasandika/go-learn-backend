@@ -3,18 +3,20 @@ package services
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
 	"uaspw2/config"
+	"uaspw2/exception"
 	"uaspw2/helper"
+	"uaspw2/models/entity"
 	"uaspw2/models/web"
 	"uaspw2/repositories"
 )
 
 type AuthService interface {
-	Login(ctx context.Context, request web.LoginRequest) (string, error)
+	Login(ctx context.Context, request web.LoginRequest) string
+	RegisterUser(ctx context.Context, request web.RegisterRequest) web.UserResponse
 }
 
 type AuthServicesImpl struct {
@@ -33,7 +35,7 @@ func NewAuthenticationServices(authRepository repositories.AuthRepository, db *s
 
 var ExpiresTime = time.Now().Add(time.Hour * 24)
 
-func (service *AuthServicesImpl) Login(ctx context.Context, request web.LoginRequest) (string, error) {
+func (service *AuthServicesImpl) Login(ctx context.Context, request web.LoginRequest) string {
 	err := service.Validate.Struct(request)
 	helper.PanicIfErr(err)
 
@@ -58,8 +60,33 @@ func (service *AuthServicesImpl) Login(ctx context.Context, request web.LoginReq
 		tokenString, err := token.SignedString(config.SecretKey)
 		helper.PanicIfErr(err)
 
-		return tokenString, nil
+		return tokenString
 	} else {
-		return "", errors.New("invalid username or password")
+		panic(exception.NewInvalidCredentialsError("invalid username or password"))
 	}
+}
+
+func (service *AuthServicesImpl) RegisterUser(ctx context.Context, request web.RegisterRequest) web.UserResponse {
+	err := service.Validate.Struct(request)
+	helper.PanicIfErr(err)
+
+	tx, err := service.DB.Begin()
+	helper.PanicIfErr(err)
+	defer helper.CommitOrRollback(tx)
+
+	user := entity.User{
+		Username: request.Username,
+		Password: request.Password,
+		Role:     "user",
+	}
+
+	hashedPassword, err := helper.HashPassword(user.Password)
+	helper.PanicIfErr(err)
+
+	user.Password = hashedPassword
+
+	user = service.AuthRepository.RegisterUser(ctx, tx, user)
+
+	user, _ = service.AuthRepository.GetUserByUsername(ctx, tx, user.Username)
+	return helper.ToUserResponse(user)
 }

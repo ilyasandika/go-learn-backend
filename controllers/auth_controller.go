@@ -11,6 +11,7 @@ import (
 type AuthController interface {
 	Login(c *fiber.Ctx) error
 	Logout(c *fiber.Ctx) error
+	Register(c *fiber.Ctx) error
 }
 
 type AuthControllerImpl struct {
@@ -28,8 +29,7 @@ func (controller *AuthControllerImpl) Login(c *fiber.Ctx) error {
 	err := c.BodyParser(&request)
 	helper.PanicIfErr(err)
 
-	token, err := controller.AuthService.Login(c.Context(), request)
-	helper.PanicIfErr(err)
+	token := controller.AuthService.Login(c.Context(), request)
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "token",
@@ -40,8 +40,8 @@ func (controller *AuthControllerImpl) Login(c *fiber.Ctx) error {
 
 	response := web.SuccessResponse{
 		Code:   fiber.StatusOK,
-		Status: "Login Successful",
-		Data:   token,
+		Status: "LOGIN SUCCESSFUL",
+		Data:   nil,
 	}
 	return c.Status(fiber.StatusOK).JSON(response)
 }
@@ -56,8 +56,24 @@ func (controller *AuthControllerImpl) Logout(c *fiber.Ctx) error {
 
 	response := web.SuccessResponse{
 		Code:   fiber.StatusOK,
-		Status: "Logout Successful",
+		Status: "LOGOUT SUCCESSFUL",
 		Data:   nil,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(response)
+}
+
+func (controller *AuthControllerImpl) Register(c *fiber.Ctx) error {
+	request := web.RegisterRequest{}
+	err := c.BodyParser(&request)
+	helper.PanicIfErr(err)
+
+	user := controller.AuthService.RegisterUser(c.Context(), request)
+
+	response := web.SuccessResponse{
+		Code:   fiber.StatusOK,
+		Status: "REGISTER SUCCESSFUL",
+		Data:   user,
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response)

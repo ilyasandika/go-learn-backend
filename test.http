@@ -3,17 +3,7 @@ GET http://localhost:3000/api/users
 Accept: application/json
 ###
 
-### Create a new user
-POST http://localhost:3000/api/users
-Accept: application/json
-Content-Type: application/json
 
-{
-    "username": "administrator",
-    "password": "akudaktau123",
-    "role": "admin"
-}
-###
 
 ### Get User By ID
 GET http://localhost:3000/api/users/15
@@ -33,7 +23,7 @@ Content-Type: application/json
 ###
 
 ### Delete a User By ID
-DELETE http://localhost:3000/api/users/5
+DELETE http://localhost:3000/api/users/20
 Accept: application/json
 ###
 
@@ -64,3 +54,16 @@ Content-Type: application/json
 POST localhost:3000/api/auth/logout
 Accept: application/json
 ###
+
+### Register
+POST http://localhost:3000/api/auth/register
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "adam123",
+    "password": "akudaktau123",
+    "role": "admin"
+}
+###
+

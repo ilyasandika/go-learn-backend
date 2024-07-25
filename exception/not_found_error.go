@@ -4,8 +4,8 @@ type NotFoundError struct {
 	Message string
 }
 
-func (error *NotFoundError) Error() string {
-	return error.Message
+func (e *NotFoundError) Error() string {
+	return e.Message
 }
 
 func NewNotFoundError(message string) *NotFoundError {

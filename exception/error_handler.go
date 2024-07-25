@@ -32,7 +32,21 @@ func notFoundError(c *fiber.Ctx, err any) bool {
 	}
 }
 
-func validatorError(c *fiber.Ctx, err error) bool {
+func invalidCredentialError(c *fiber.Ctx, err any) bool {
+	exception, ok := err.(NotFoundError)
+	if ok {
+		errorResponse := web.ErrorResponse{
+			Code:   fiber.StatusUnauthorized,
+			Status: "UNAUTHORIZED",
+			Error:  exception.Error(),
+		}
+		return c.Status(fiber.StatusNotFound).JSON(errorResponse) == nil // c.Status... itu return nya error
+	} else {
+		return false
+	}
+}
+
+func validatorError(c *fiber.Ctx, err any) bool {
 	exception, ok := err.(validator.ValidationErrors)
 
 	var errorMessages []string

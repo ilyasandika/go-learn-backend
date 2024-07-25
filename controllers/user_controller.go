@@ -8,7 +8,6 @@ import (
 )
 
 type UserController interface {
-	Create(c *fiber.Ctx) error
 	Update(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
 	FindById(c *fiber.Ctx) error
@@ -23,21 +22,6 @@ func NewUserController(service services.UserService) UserController {
 	return &UserControllerImpl{
 		service: service,
 	}
-}
-
-func (controller *UserControllerImpl) Create(c *fiber.Ctx) error {
-	request := web2.UserCreateRequest{}
-	err := c.BodyParser(&request)
-	helper.PanicIfErr(err)
-
-	data := controller.service.Create(c.Context(), request)
-	successResponse := web2.SuccessResponse{
-		Code:   fiber.StatusOK,
-		Status: "SUCCESS",
-		Data:   data,
-	}
-
-	return c.Status(fiber.StatusOK).JSON(successResponse)
 }
 
 func (controller *UserControllerImpl) Update(c *fiber.Ctx) error {

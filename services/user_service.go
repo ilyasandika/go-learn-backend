@@ -7,16 +7,15 @@ import (
 	"uaspw2/exception"
 	"uaspw2/helper"
 	"uaspw2/models/entity"
-	web2 "uaspw2/models/web"
+	"uaspw2/models/web"
 	"uaspw2/repositories"
 )
 
 type UserService interface {
-	Create(ctx context.Context, request web2.UserCreateRequest) web2.UserResponse
-	Update(ctx context.Context, request web2.UserUpdateRequest) web2.UserResponse
+	Update(ctx context.Context, request web.UserUpdateRequest) web.UserResponse
 	Delete(ctx context.Context, id int)
-	FindByID(ctx context.Context, id int) web2.UserResponse
-	FindAll(ctx context.Context) []web2.UserResponse
+	FindByID(ctx context.Context, id int) web.UserResponse
+	FindAll(ctx context.Context) []web.UserResponse
 }
 
 type UserServiceImpl struct {
@@ -33,33 +32,7 @@ func NewUserService(userRepository repositories.UserRepository, db *sql.DB, vali
 	}
 }
 
-func (service *UserServiceImpl) Create(ctx context.Context, request web2.UserCreateRequest) web2.UserResponse {
-	err := service.validate.Struct(request)
-	helper.PanicIfErr(err)
-
-	tx, err := service.DB.Begin()
-	helper.PanicIfErr(err)
-	defer helper.CommitOrRollback(tx)
-
-	user := entity.User{
-		Username: request.Username,
-		Password: request.Password,
-		Role:     request.Role,
-	}
-
-	hashedPassword, err := helper.HashPassword(user.Password)
-	helper.PanicIfErr(err)
-
-	user.Password = hashedPassword
-
-	lastInsertID := service.UserRepository.Create(ctx, tx, user)
-
-	user, _ = service.UserRepository.FindByID(ctx, tx, lastInsertID)
-	return helper.ToUserResponse(user)
-
-}
-
-func (service *UserServiceImpl) Update(ctx context.Context, request web2.UserUpdateRequest) web2.UserResponse {
+func (service *UserServiceImpl) Update(ctx context.Context, request web.UserUpdateRequest) web.UserResponse {
 	err := service.validate.Struct(request)
 	helper.PanicIfErr(err)
 
@@ -100,7 +73,7 @@ func (service *UserServiceImpl) Delete(ctx context.Context, id int) {
 	service.UserRepository.Delete(ctx, tx, user.Id)
 }
 
-func (service *UserServiceImpl) FindByID(ctx context.Context, id int) web2.UserResponse {
+func (service *UserServiceImpl) FindByID(ctx context.Context, id int) web.UserResponse {
 	tx, err := service.DB.Begin()
 	helper.PanicIfErr(err)
 	defer helper.CommitOrRollback(tx)
@@ -113,7 +86,7 @@ func (service *UserServiceImpl) FindByID(ctx context.Context, id int) web2.UserR
 	return helper.ToUserResponse(user)
 }
 
-func (service *UserServiceImpl) FindAll(ctx context.Context) []web2.UserResponse {
+func (service *UserServiceImpl) FindAll(ctx context.Context) []web.UserResponse {
 	tx, err := service.DB.Begin()
 	helper.PanicIfErr(err)
 	defer helper.CommitOrRollback(tx)
