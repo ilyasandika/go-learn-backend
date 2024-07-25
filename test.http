@@ -9,9 +9,9 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "username": "triani12",
+    "username": "administrator",
     "password": "akudaktau123",
-    "role": "user"
+    "role": "admin"
 }
 ###
 
@@ -33,18 +33,29 @@ Content-Type: application/json
 ###
 
 ### Delete a User By ID
-DELETE http://localhost:3000/api/users/12
+DELETE http://localhost:3000/api/users/5
 Accept: application/json
 ###
 
 
-### Login
+### Login user
 POST http://localhost:3000/api/auth/login
 Accept: application/json
 Content-Type: application/json
 
 {
     "username": "triani12",
+    "password" : "akudaktau123"
+}
+###
+
+### Login admin
+POST http://localhost:3000/api/auth/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "administrator",
     "password" : "akudaktau123"
 }
 ###

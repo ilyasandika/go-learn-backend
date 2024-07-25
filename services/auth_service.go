@@ -13,7 +13,7 @@ import (
 	"uaspw2/repositories"
 )
 
-type AuthServices interface {
+type AuthService interface {
 	Login(ctx context.Context, request web.LoginRequest) (string, error)
 }
 
@@ -23,7 +23,7 @@ type AuthServicesImpl struct {
 	Validate       *validator.Validate
 }
 
-func NewAuthenticationServices(authRepository repositories.AuthRepository, db *sql.DB, validate *validator.Validate) AuthServices {
+func NewAuthenticationServices(authRepository repositories.AuthRepository, db *sql.DB, validate *validator.Validate) AuthService {
 	return &AuthServicesImpl{
 		AuthRepository: authRepository,
 		DB:             db,
@@ -46,7 +46,7 @@ func (service *AuthServicesImpl) Login(ctx context.Context, request web.LoginReq
 
 	if helper.CheckPasswordHash(request.Password, user.Password) {
 		//generate token
-		claims := config.Claims{
+		claims := config.UserClaims{
 			Id:       user.Id,
 			Username: user.Username,
 			Role:     user.Role,

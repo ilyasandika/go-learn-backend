@@ -41,6 +41,7 @@ func main() {
 	authController := controllers.NewAuthenticationController(authService)
 
 	app.Use(recover2.New())
+
 	routes.SetupUserRoutes(app, userController)
 	routes.SetupAuthRoutes(app, authController)
 

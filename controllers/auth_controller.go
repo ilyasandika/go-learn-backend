@@ -14,12 +14,12 @@ type AuthController interface {
 }
 
 type AuthControllerImpl struct {
-	services.AuthServices
+	services.AuthService
 }
 
-func NewAuthenticationController(authServices services.AuthServices) AuthController {
+func NewAuthenticationController(authServices services.AuthService) AuthController {
 	return &AuthControllerImpl{
-		AuthServices: authServices,
+		AuthService: authServices,
 	}
 }
 
@@ -28,7 +28,7 @@ func (controller *AuthControllerImpl) Login(c *fiber.Ctx) error {
 	err := c.BodyParser(&request)
 	helper.PanicIfErr(err)
 
-	token, err := controller.AuthServices.Login(c.Context(), request)
+	token, err := controller.AuthService.Login(c.Context(), request)
 	helper.PanicIfErr(err)
 
 	c.Cookie(&fiber.Cookie{
