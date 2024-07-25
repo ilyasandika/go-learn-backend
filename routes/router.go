@@ -19,9 +19,9 @@ func SetupUserRoutes(app *fiber.App, controller controllers.UserController) {
 
 func SetupAuthRoutes(app *fiber.App, controller controllers.AuthController) {
 	apiGroup := app.Group("/api")
-	userGroup := apiGroup.Group("/auth")
+	authGroup := apiGroup.Group("/auth")
 	{
-		userGroup.Post("/login", controller.Login)
-
+		authGroup.Post("/login", controller.Login)
+		authGroup.Post("/logout", controller.Logout)
 	}
 }

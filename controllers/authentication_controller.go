@@ -2,13 +2,15 @@ package controllers
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"time"
 	"uaspw2/helper"
-	web2 "uaspw2/models/web"
+	"uaspw2/models/web"
 	"uaspw2/services"
 )
 
 type AuthController interface {
 	Login(c *fiber.Ctx) error
+	Logout(c *fiber.Ctx) error
 }
 
 type AuthControllerImpl struct {
@@ -22,7 +24,7 @@ func NewAuthenticationController(authServices services.AuthServices) AuthControl
 }
 
 func (controller *AuthControllerImpl) Login(c *fiber.Ctx) error {
-	request := web2.LoginRequest{}
+	request := web.LoginRequest{}
 	err := c.BodyParser(&request)
 	helper.PanicIfErr(err)
 
@@ -36,10 +38,27 @@ func (controller *AuthControllerImpl) Login(c *fiber.Ctx) error {
 		Expires:  services.ExpiresTime,
 	})
 
-	response := web2.SuccessResponse{
+	response := web.SuccessResponse{
 		Code:   fiber.StatusOK,
 		Status: "Login Successful",
 		Data:   token,
 	}
+	return c.Status(fiber.StatusOK).JSON(response)
+}
+
+func (controller *AuthControllerImpl) Logout(c *fiber.Ctx) error {
+	c.Cookie(&fiber.Cookie{
+		Name:     "token",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour),
+		HTTPOnly: true,
+	})
+
+	response := web.SuccessResponse{
+		Code:   fiber.StatusOK,
+		Status: "Logout Successful",
+		Data:   nil,
+	}
+
 	return c.Status(fiber.StatusOK).JSON(response)
 }
