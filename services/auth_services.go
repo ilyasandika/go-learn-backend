@@ -41,15 +41,11 @@ func (service *AuthServicesImpl) Login(ctx context.Context, request web.LoginReq
 	helper.PanicIfErr(err)
 	defer helper.CommitOrRollback(tx)
 
-	hashedPassword, err := service.AuthRepository.GetPasswordByUsername(ctx, tx, request.Username)
+	user, err := service.AuthRepository.GetUserByUsername(ctx, tx, request.Username)
 	helper.PanicIfErr(err)
 
-	if helper.CheckPasswordHash(request.Password, hashedPassword) {
-		user, err := service.AuthRepository.Login(ctx, tx, request)
-		helper.PanicIfErr(err)
-
+	if helper.CheckPasswordHash(request.Password, user.Password) {
 		//generate token
-
 		claims := config.Claims{
 			Id:       user.Id,
 			Username: user.Username,
