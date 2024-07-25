@@ -7,26 +7,26 @@ import (
 	"uaspw2/services"
 )
 
-type AuthenticationController interface {
+type AuthController interface {
 	Login(c *fiber.Ctx) error
 }
 
-type AuthenticationControllerImpl struct {
-	services.AuthenticationServices
+type AuthControllerImpl struct {
+	services.AuthServices
 }
 
-func NewAuthenticationController(authenticationServices services.AuthenticationServices) AuthenticationController {
-	return &AuthenticationControllerImpl{
-		AuthenticationServices: authenticationServices,
+func NewAuthenticationController(authServices services.AuthServices) AuthController {
+	return &AuthControllerImpl{
+		AuthServices: authServices,
 	}
 }
 
-func (controller *AuthenticationControllerImpl) Login(c *fiber.Ctx) error {
+func (controller *AuthControllerImpl) Login(c *fiber.Ctx) error {
 	request := web2.LoginRequest{}
 	err := c.BodyParser(&request)
 	helper.PanicIfErr(err)
 
-	token, err := controller.AuthenticationServices.Login(c.Context(), request)
+	token, err := controller.AuthServices.Login(c.Context(), request)
 	helper.PanicIfErr(err)
 
 	c.Cookie(&fiber.Cookie{

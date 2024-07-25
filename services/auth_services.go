@@ -13,27 +13,27 @@ import (
 	"uaspw2/repositories"
 )
 
-type AuthenticationServices interface {
+type AuthServices interface {
 	Login(ctx context.Context, request web.LoginRequest) (string, error)
 }
 
-type AuthenticationServicesImpl struct {
-	AuthenticationRepository repositories.AuthenticationRepository
-	DB                       *sql.DB
-	Validate                 *validator.Validate
+type AuthServicesImpl struct {
+	AuthRepository repositories.AuthRepository
+	DB             *sql.DB
+	Validate       *validator.Validate
 }
 
-func NewAuthenticationServices(authenticationRepository repositories.AuthenticationRepository, db *sql.DB, validate *validator.Validate) AuthenticationServices {
-	return &AuthenticationServicesImpl{
-		AuthenticationRepository: authenticationRepository,
-		DB:                       db,
-		Validate:                 validate,
+func NewAuthenticationServices(authRepository repositories.AuthRepository, db *sql.DB, validate *validator.Validate) AuthServices {
+	return &AuthServicesImpl{
+		AuthRepository: authRepository,
+		DB:             db,
+		Validate:       validate,
 	}
 }
 
 var ExpiresTime = time.Now().Add(time.Hour * 24)
 
-func (service *AuthenticationServicesImpl) Login(ctx context.Context, request web.LoginRequest) (string, error) {
+func (service *AuthServicesImpl) Login(ctx context.Context, request web.LoginRequest) (string, error) {
 	err := service.Validate.Struct(request)
 	helper.PanicIfErr(err)
 
@@ -41,11 +41,11 @@ func (service *AuthenticationServicesImpl) Login(ctx context.Context, request we
 	helper.PanicIfErr(err)
 	defer helper.CommitOrRollback(tx)
 
-	hashedPassword, err := service.AuthenticationRepository.GetPasswordByUsername(ctx, tx, request.Username)
+	hashedPassword, err := service.AuthRepository.GetPasswordByUsername(ctx, tx, request.Username)
 	helper.PanicIfErr(err)
 
 	if helper.CheckPasswordHash(request.Password, hashedPassword) {
-		user, err := service.AuthenticationRepository.Login(ctx, tx, request)
+		user, err := service.AuthRepository.Login(ctx, tx, request)
 		helper.PanicIfErr(err)
 
 		//generate token
