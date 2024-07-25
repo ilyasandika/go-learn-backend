@@ -1,11 +1,11 @@
-package repository
+package repositories
 
 import (
 	"context"
 	"database/sql"
 	"errors"
 	"uaspw2/helper"
-	"uaspw2/model/entity"
+	"uaspw2/models/entity"
 )
 
 type UserRepository interface {

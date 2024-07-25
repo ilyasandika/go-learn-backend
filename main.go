@@ -2,14 +2,15 @@ package main
 
 import (
 	"database/sql"
+	"github.com/go-playground/validator/v10"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	recover2 "github.com/gofiber/fiber/v2/middleware/recover"
 	"time"
-	"uaspw2/controller"
+	"uaspw2/controllers"
 	"uaspw2/exception"
-	"uaspw2/repository"
+	"uaspw2/repositories"
 	"uaspw2/routes"
 	"uaspw2/services"
 )
@@ -18,8 +19,6 @@ func main() {
 	app := fiber.New(fiber.Config{
 		ErrorHandler: exception.ErrorHandler,
 	})
-
-	app.Use(recover2.New())
 
 	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/uaspw2")
 	if err != nil {
@@ -31,10 +30,19 @@ func main() {
 	db.SetConnMaxLifetime(60 * time.Minute)
 	db.SetConnMaxIdleTime(10 * time.Minute)
 
-	userRepository := repository.NewUserRepository()
-	userServices := services.NewUserService(userRepository, db)
-	userController := controller.NewUserController(userServices)
+	validate := validator.New()
+
+	userRepository := repositories.NewUserRepository()
+	userService := services.NewUserService(userRepository, db, validate)
+	userController := controllers.NewUserController(userService)
+
+	authRepository := repositories.NewAuthenticationRepository()
+	authService := services.NewAuthenticationServices(authRepository, db, validate)
+	authController := controllers.NewAuthenticationController(authService)
+
+	app.Use(recover2.New())
 	routes.SetupUserRoutes(app, userController)
+	routes.SetupAuthRoutes(app, authController)
 
 	go func() {
 		if err := app.Listen(":3000"); err != nil {

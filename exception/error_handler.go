@@ -3,7 +3,7 @@ package exception
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"uaspw2/web"
+	"uaspw2/models/web"
 )
 
 func ErrorHandler(c *fiber.Ctx, err error) error {

@@ -2,8 +2,8 @@ package helper
 
 import (
 	"strconv"
-	"uaspw2/model/entity"
-	"uaspw2/web"
+	"uaspw2/models/entity"
+	"uaspw2/models/web"
 )
 
 func ToUserResponse(user entity.User) web.UserResponse {

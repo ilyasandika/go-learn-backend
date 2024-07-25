@@ -1,10 +1,10 @@
-package controller
+package controllers
 
 import (
 	"github.com/gofiber/fiber/v2"
 	"uaspw2/helper"
+	web2 "uaspw2/models/web"
 	"uaspw2/services"
-	"uaspw2/web"
 )
 
 type UserController interface {
@@ -26,12 +26,12 @@ func NewUserController(service services.UserService) UserController {
 }
 
 func (controller *UserControllerImpl) Create(c *fiber.Ctx) error {
-	request := web.UserCreateRequest{}
+	request := web2.UserCreateRequest{}
 	err := c.BodyParser(&request)
 	helper.PanicIfErr(err)
 
 	data := controller.service.Create(c.Context(), request)
-	successResponse := web.SuccessResponse{
+	successResponse := web2.SuccessResponse{
 		Code:   fiber.StatusOK,
 		Status: "SUCCESS",
 		Data:   data,
@@ -41,14 +41,14 @@ func (controller *UserControllerImpl) Create(c *fiber.Ctx) error {
 }
 
 func (controller *UserControllerImpl) Update(c *fiber.Ctx) error {
-	request := web.UserUpdateRequest{}
+	request := web2.UserUpdateRequest{}
 	err := c.BodyParser(&request)
 	helper.PanicIfErr(err)
 
 	request.Id = helper.ToIntFromParams(c.Params("userId"))
 
 	data := controller.service.Update(c.Context(), request)
-	successResponse := web.SuccessResponse{
+	successResponse := web2.SuccessResponse{
 		Code:   fiber.StatusOK,
 		Status: "SUCCESS",
 		Data:   data,
@@ -62,7 +62,7 @@ func (controller *UserControllerImpl) Delete(c *fiber.Ctx) error {
 
 	controller.service.Delete(c.Context(), userId)
 
-	successResponse := web.SuccessResponse{
+	successResponse := web2.SuccessResponse{
 		Code:   fiber.StatusOK,
 		Status: "SUCCESS",
 		Data:   nil,
@@ -76,7 +76,7 @@ func (controller *UserControllerImpl) FindById(c *fiber.Ctx) error {
 
 	data := controller.service.FindByID(c.Context(), userId)
 
-	successResponse := web.SuccessResponse{
+	successResponse := web2.SuccessResponse{
 		Code:   fiber.StatusOK,
 		Status: "SUCCESS",
 		Data:   data,
@@ -88,7 +88,7 @@ func (controller *UserControllerImpl) FindById(c *fiber.Ctx) error {
 func (controller *UserControllerImpl) FindAll(c *fiber.Ctx) error {
 	data := controller.service.FindAll(c.Context())
 
-	successResponse := web.SuccessResponse{
+	successResponse := web2.SuccessResponse{
 		Code:   fiber.StatusOK,
 		Status: "SUCCESS",
 		Data:   data,

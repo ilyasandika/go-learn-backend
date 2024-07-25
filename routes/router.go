@@ -2,12 +2,11 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"uaspw2/controller"
+	"uaspw2/controllers"
 )
 
-func SetupUserRoutes(app *fiber.App, controller controller.UserController) {
+func SetupUserRoutes(app *fiber.App, controller controllers.UserController) {
 	apiGroup := app.Group("/api")
-
 	userGroup := apiGroup.Group("/users")
 	{
 		userGroup.Get("/", controller.FindAll)
@@ -16,5 +15,13 @@ func SetupUserRoutes(app *fiber.App, controller controller.UserController) {
 		userGroup.Put("/:userId", controller.Update)
 		userGroup.Delete("/:userId", controller.Delete)
 	}
+}
 
+func SetupAuthRoutes(app *fiber.App, controller controllers.AuthenticationController) {
+	apiGroup := app.Group("/api")
+	userGroup := apiGroup.Group("/auth")
+	{
+		userGroup.Post("/login", controller.Login)
+
+	}
 }

@@ -9,26 +9,25 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "username": "user5",
-    "password": "password1",
+    "username": "triani12",
+    "password": "akudaktau123",
     "role": "user"
 }
 ###
 
 ### Get User By ID
-GET http://localhost:3000/api/users/10
+GET http://localhost:3000/api/users/15
 Accept: application/json
 ###
 
 
 ### Update user by ID
-PUT http://localhost:3000/api/users/10
+PUT http://localhost:3000/api/users/15
 Accept: application/json
 Content-Type: application/json
 
 {
-    "username": "Updated Name",
-    "password": "password1",
+    "username": "ilyasand",
     "role": "user"
 }
 ###
@@ -38,3 +37,13 @@ DELETE http://localhost:3000/api/users/12
 Accept: application/json
 ###
 
+
+### Login
+POST http://localhost:3000/api/auth/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "triani12",
+    "password" : "akudaktau123"
+}

@@ -6,26 +6,26 @@ import (
 	"github.com/go-playground/validator/v10"
 	"uaspw2/exception"
 	"uaspw2/helper"
-	"uaspw2/model/entity"
-	"uaspw2/repository"
-	"uaspw2/web"
+	"uaspw2/models/entity"
+	web2 "uaspw2/models/web"
+	"uaspw2/repositories"
 )
 
 type UserService interface {
-	Create(ctx context.Context, request web.UserCreateRequest) web.UserResponse
-	Update(ctx context.Context, request web.UserUpdateRequest) web.UserResponse
+	Create(ctx context.Context, request web2.UserCreateRequest) web2.UserResponse
+	Update(ctx context.Context, request web2.UserUpdateRequest) web2.UserResponse
 	Delete(ctx context.Context, id int)
-	FindByID(ctx context.Context, id int) web.UserResponse
-	FindAll(ctx context.Context) []web.UserResponse
+	FindByID(ctx context.Context, id int) web2.UserResponse
+	FindAll(ctx context.Context) []web2.UserResponse
 }
 
 type UserServiceImpl struct {
-	UserRepository repository.UserRepository
+	UserRepository repositories.UserRepository
 	DB             *sql.DB
 	validate       *validator.Validate
 }
 
-func NewUserService(userRepository repository.UserRepository, db *sql.DB, validate *validator.Validate) UserService {
+func NewUserService(userRepository repositories.UserRepository, db *sql.DB, validate *validator.Validate) UserService {
 	return &UserServiceImpl{
 		UserRepository: userRepository,
 		DB:             db,
@@ -33,7 +33,7 @@ func NewUserService(userRepository repository.UserRepository, db *sql.DB, valida
 	}
 }
 
-func (service *UserServiceImpl) Create(ctx context.Context, request web.UserCreateRequest) web.UserResponse {
+func (service *UserServiceImpl) Create(ctx context.Context, request web2.UserCreateRequest) web2.UserResponse {
 	err := service.validate.Struct(request)
 	helper.PanicIfErr(err)
 
@@ -59,7 +59,7 @@ func (service *UserServiceImpl) Create(ctx context.Context, request web.UserCrea
 
 }
 
-func (service *UserServiceImpl) Update(ctx context.Context, request web.UserUpdateRequest) web.UserResponse {
+func (service *UserServiceImpl) Update(ctx context.Context, request web2.UserUpdateRequest) web2.UserResponse {
 	err := service.validate.Struct(request)
 	helper.PanicIfErr(err)
 
@@ -100,7 +100,7 @@ func (service *UserServiceImpl) Delete(ctx context.Context, id int) {
 	service.UserRepository.Delete(ctx, tx, user.Id)
 }
 
-func (service *UserServiceImpl) FindByID(ctx context.Context, id int) web.UserResponse {
+func (service *UserServiceImpl) FindByID(ctx context.Context, id int) web2.UserResponse {
 	tx, err := service.DB.Begin()
 	helper.PanicIfErr(err)
 	defer helper.CommitOrRollback(tx)
@@ -113,7 +113,7 @@ func (service *UserServiceImpl) FindByID(ctx context.Context, id int) web.UserRe
 	return helper.ToUserResponse(user)
 }
 
-func (service *UserServiceImpl) FindAll(ctx context.Context) []web.UserResponse {
+func (service *UserServiceImpl) FindAll(ctx context.Context) []web2.UserResponse {
 	tx, err := service.DB.Begin()
 	helper.PanicIfErr(err)
 	defer helper.CommitOrRollback(tx)
