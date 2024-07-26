@@ -22,6 +22,18 @@ Content-Type: application/json
 }
 ###
 
+### Update user by token
+PUT http://localhost:3000/api/users
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "triani123",
+    "role": "user"
+}
+###
+
+
 ### Delete a User By ID
 DELETE http://localhost:3000/api/users/20
 Accept: application/json

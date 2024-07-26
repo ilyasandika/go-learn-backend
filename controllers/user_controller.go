@@ -8,7 +8,8 @@ import (
 )
 
 type UserController interface {
-	Update(c *fiber.Ctx) error
+	UpdateByToken(c *fiber.Ctx) error
+	UpdateByPath(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
 	FindById(c *fiber.Ctx) error
 	FindAll(c *fiber.Ctx) error
@@ -24,12 +25,32 @@ func NewUserController(service services.UserService) UserController {
 	}
 }
 
-func (controller *UserControllerImpl) Update(c *fiber.Ctx) error {
+func (controller *UserControllerImpl) UpdateByPath(c *fiber.Ctx) error {
 	request := web2.UserUpdateRequest{}
 	err := c.BodyParser(&request)
 	helper.PanicIfErr(err)
 
 	request.Id = helper.ToIntFromParams(c.Params("userId"))
+
+	data := controller.service.Update(c.Context(), request)
+	successResponse := web2.SuccessResponse{
+		Code:   fiber.StatusOK,
+		Status: "SUCCESS",
+		Data:   data,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(successResponse)
+}
+
+func (controller *UserControllerImpl) UpdateByToken(c *fiber.Ctx) error {
+	request := web2.UserUpdateRequest{}
+	err := c.BodyParser(&request)
+	helper.PanicIfErr(err)
+
+	user, err := helper.GetUserByToken(c)
+	helper.PanicIfErr(err)
+
+	request.Id = user.Id
 
 	data := controller.service.Update(c.Context(), request)
 	successResponse := web2.SuccessResponse{

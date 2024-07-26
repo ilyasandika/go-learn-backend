@@ -7,7 +7,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	recover2 "github.com/gofiber/fiber/v2/middleware/recover"
-	"time"
 	"uaspw2/controllers"
 	"uaspw2/exception"
 	"uaspw2/repositories"
@@ -24,11 +23,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error opening database connection: %v", err)
 	}
-
-	db.SetMaxIdleConns(5)
-	db.SetMaxOpenConns(20)
-	db.SetConnMaxLifetime(60 * time.Minute)
-	db.SetConnMaxIdleTime(10 * time.Minute)
 
 	validate := validator.New()
 

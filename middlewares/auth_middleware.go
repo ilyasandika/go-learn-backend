@@ -29,6 +29,7 @@ func AdminOnly(c *fiber.Ctx) error {
 	if claims, ok := token.(*config.UserClaims); ok && claims.Role == "admin" {
 		return c.Next()
 	}
+
 	return helper.HandleTokenError(c)
 }
 

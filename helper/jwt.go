@@ -34,3 +34,22 @@ func HandleTokenError(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusUnauthorized).JSON(errorResponse)
 }
+
+func GetUserByToken(c *fiber.Ctx) (web.UserUpdateRequest, error) {
+	userClaims := &config.UserClaims{}
+	token, err := VerifyToken(c, userClaims)
+	user := web.UserUpdateRequest{}
+
+	if err != nil {
+		return user, HandleTokenError(c)
+	}
+
+	if claims, ok := token.(*config.UserClaims); ok {
+		user.Id = claims.Id
+		user.Username = claims.Username
+		user.Role = claims.Role
+		return user, nil
+	}
+
+	return user, HandleTokenError(c)
+}
