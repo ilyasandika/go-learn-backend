@@ -11,7 +11,8 @@ func SetupUserRoutes(app *fiber.App, controller controllers.UserController) {
 	userGroup := apiGroup.Group("/users")
 	{
 		userGroup.Get("/", middlewares.AdminOnly, controller.FindAll)
-		userGroup.Get("/:userId", controller.FindById)
+		userGroup.Get("/:userId", middlewares.AdminOnly, controller.FindByPath)
+		userGroup.Get("/:userId", middlewares.AuthRequired, controller.FindByPath)
 		userGroup.Put("/:userId", middlewares.AdminOnly, controller.UpdateByPath)
 		userGroup.Put("/", middlewares.AuthRequired, controller.UpdateByToken)
 		userGroup.Delete("/:userId", middlewares.AdminOnly, controller.Delete)

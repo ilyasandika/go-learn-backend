@@ -11,7 +11,8 @@ type UserController interface {
 	UpdateByToken(c *fiber.Ctx) error
 	UpdateByPath(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
-	FindById(c *fiber.Ctx) error
+	FindByPath(c *fiber.Ctx) error
+	FindByToken(c *fiber.Ctx) error
 	FindAll(c *fiber.Ctx) error
 }
 
@@ -76,8 +77,25 @@ func (controller *UserControllerImpl) Delete(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(successResponse)
 }
 
-func (controller *UserControllerImpl) FindById(c *fiber.Ctx) error {
+func (controller *UserControllerImpl) FindByPath(c *fiber.Ctx) error {
 	userId := helper.ToIntFromParams(c.Params("userId"))
+
+	data := controller.service.FindByID(c.Context(), userId)
+
+	successResponse := web2.SuccessResponse{
+		Code:   fiber.StatusOK,
+		Status: "SUCCESS",
+		Data:   data,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(successResponse)
+}
+
+func (controller *UserControllerImpl) FindByToken(c *fiber.Ctx) error {
+	user, err := helper.GetUserByToken(c)
+	helper.PanicIfErr(err)
+	
+	userId := user.Id
 
 	data := controller.service.FindByID(c.Context(), userId)
 
