@@ -23,7 +23,7 @@ func NewUserProfileRepository() UserProfileRepository {
 }
 
 func (repository *UserProfileRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, userProfile entity.UserProfile) entity.UserProfile {
-	SQL := `UPDATE user_profiles SET full_name = ?, gender = ?, birthdate = ?, phone_number = ?, address = ? = ? WHERE user_id = ?`
+	SQL := `UPDATE user_profiles SET full_name = ?, gender = ?, birthdate = ?, phone_number = ?, address = ?  WHERE user_id = ?`
 	_, err := tx.ExecContext(ctx, SQL, userProfile.FullName, userProfile.Gender, userProfile.BirthDate, userProfile.PhoneNumber, userProfile.Address, userProfile.UserId)
 	helper.PanicIfErr(err)
 
@@ -49,10 +49,8 @@ func (repository *UserProfileRepositoryImpl) FindByUserID(ctx context.Context, t
 		var phoneNumber sql.NullString
 		var address sql.NullString
 
-		err = row.Scan(&user.UserId, &fullName, &gender, &birthDate, &phoneNumber, &address)
-		if err != nil {
-			helper.PanicIfErr(err)
-		}
+		err = row.Scan(&user.UserId, &fullName, &gender, &birthDate, &phoneNumber, &address, &user.CreatedAt, &user.UpdatedAt)
+		helper.PanicIfErr(err)
 
 		user.FullName = helper.NullStringToString(fullName)
 		user.Gender = helper.NullStringToString(gender)
@@ -67,11 +65,9 @@ func (repository *UserProfileRepositoryImpl) FindByUserID(ctx context.Context, t
 }
 
 func (repository *UserProfileRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []entity.UserProfile {
-	SQL := `SELECT user_id, full_name, gender, birthdate, phone_number, address, created_at, update_at FROM user_profiles`
+	SQL := `SELECT user_id, full_name, gender, birthdate, phone_number, address, created_at, updated_at FROM user_profiles`
 	rows, err := tx.QueryContext(ctx, SQL)
-	if err != nil {
-		helper.PanicIfErr(err)
-	}
+	helper.PanicIfErr(err)
 	defer rows.Close()
 
 	var userProfiles []entity.UserProfile
@@ -85,7 +81,7 @@ func (repository *UserProfileRepositoryImpl) FindAll(ctx context.Context, tx *sq
 		var phoneNumber sql.NullString
 		var address sql.NullString
 
-		err = rows.Scan(&user.UserId, &fullName, &gender, &birthDate, &phoneNumber, &address)
+		err = rows.Scan(&user.UserId, &fullName, &gender, &birthDate, &phoneNumber, &address, &user.CreatedAt, &user.UpdatedAt)
 		if err != nil {
 			helper.PanicIfErr(err)
 		}

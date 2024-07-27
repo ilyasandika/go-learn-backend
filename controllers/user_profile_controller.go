@@ -78,7 +78,7 @@ func (controller *UserProfileControllerImpl) UpdateByToken(c *fiber.Ctx) error {
 	data := controller.UserProfileService.Update(c.Context(), req)
 	webResponse := response.SuccessResponse{
 		Code:    fiber.StatusOK,
-		Message: "User profile found",
+		Message: "User profile updated successfully",
 		Data:    data,
 	}
 

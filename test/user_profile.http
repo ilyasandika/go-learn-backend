@@ -3,10 +3,22 @@ GET http://localhost:3000/api/user_profiles
 Accept: application/json
 
 ### GET user profile by ID
-GET http://localhost:3000/api/user_profiles/35
+GET http://localhost:3000/api/user_profiles/details/1
+Accept: application/json
 
 ### GET user profile by token
 GET http://localhost:3000/api/user_profiles/details
+Accept: application/json
 
 ### Update user porfile by Token
 PUT http://localhost:3000/api/user_profiles/details
+Accept: application/json
+Content-Type: application/json
+
+{
+    "full_name" : "Ilyas Andika",
+    "gender" : "male",
+	"birth_date": "2003-02-10 00:00:00",
+	"phone_number": "+628987654321",
+	"address": "Indonesia"
+}

@@ -70,21 +70,22 @@ func invalidParameterError(c *fiber.Ctx, err error) bool {
 	}
 }
 
-func validatorError(c *fiber.Ctx, err error) bool {
-	var exception validator.ValidationErrors
+func validatorError(c *fiber.Ctx, err any) bool {
+
+	exception, ok := err.(validator.ValidationErrors)
 
 	var errorMessages []string
 	for _, err := range exception {
 		errorMessages = append(errorMessages, err.Translate(nil))
 	}
 
-	if errors.As(err, &exception) {
+	if ok {
 		errorResponse := response.ErrorResponse{
 			Code:    fiber.StatusBadRequest,
 			Message: "BAD REQUEST",
-			Error:   errorMessages,
+			Error:   exception.Error(),
 		}
-		return c.Status(fiber.StatusNotFound).JSON(errorResponse) == nil // c.Message... itu return nya error
+		return c.Status(fiber.StatusBadRequest).JSON(errorResponse) == nil // c.Message... itu return nya error
 	} else {
 		return false
 	}

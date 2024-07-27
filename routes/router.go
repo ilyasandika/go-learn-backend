@@ -36,6 +36,6 @@ func SetupUserProfileRoutes(app *fiber.App, controller controllers.UserProfileCo
 		userGroup.Get("/", middlewares.AdminOnly, controller.FindAll)
 		userGroup.Get("/details/:userId", middlewares.AuthRequired, controller.FindByPath)
 		userGroup.Get("/details", middlewares.AuthRequired, controller.FindByToken)
-		userGroup.Put("/details", middlewares.UserOnly, controller.UpdateByToken)
+		userGroup.Put("/details", middlewares.AuthRequired, controller.UpdateByToken)
 	}
 }

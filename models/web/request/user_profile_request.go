@@ -4,7 +4,7 @@ type UserProfileUpdateRequest struct {
 	UserId      int    `json:"user_id" validate:"required,numeric"`
 	FullName    string `json:"full_name" validate:"required"`
 	Gender      string `json:"gender" validate:"required"`
-	BirthDate   string `json:"birth_date" validate:"required,datetime"`
+	BirthDate   string `json:"birth_date" validate:"required,datetime=2006-01-02 15:04:05"`
 	PhoneNumber string `json:"phone_number" validate:"required,e164"`
 	Address     string `json:"address" validate:"required"`
 }
