@@ -7,3 +7,6 @@ GET http://localhost:3000/api/user_profiles/35
 
 ### GET user profile by token
 GET http://localhost:3000/api/user_profiles/details
+
+### Update user porfile by Token
+PUT http://localhost:3000/api/user_profiles/details
