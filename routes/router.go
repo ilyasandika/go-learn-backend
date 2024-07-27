@@ -28,3 +28,14 @@ func SetupAuthRoutes(app *fiber.App, controller controllers.AuthController) {
 		authGroup.Post("/register", middlewares.GuestOnly, controller.Register)
 	}
 }
+
+func SetupUserProfileRoutes(app *fiber.App, controller controllers.UserProfileController) {
+	apiGroup := app.Group("/api")
+	userGroup := apiGroup.Group("/user_profiles")
+	{
+		userGroup.Get("/", middlewares.AdminOnly, controller.FindAll)
+		userGroup.Get("/details/:userId", middlewares.AuthRequired, controller.FindByPath)
+		userGroup.Get("/details", middlewares.AuthRequired, controller.FindByToken)
+		userGroup.Put("/details", middlewares.UserOnly, controller.UpdateByToken)
+	}
+}

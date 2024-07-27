@@ -1,0 +1,38 @@
+### Login admin
+POST http://localhost:3000/api/auth/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "administrator2",
+    "password" : "123456"
+}
+
+### Login user
+POST http://localhost:3000/api/auth/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "user01",
+    "password" : "123456"
+}
+
+### Logout
+POST localhost:3000/api/auth/logout
+Accept: application/json
+
+
+### Register
+POST localhost:3000/api/auth/register
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "administrator2",
+    "password" : "123456"
+}
+
+
+
+

@@ -5,7 +5,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"uaspw2/config"
 	"uaspw2/helper"
-	"uaspw2/models/web"
+	"uaspw2/models/web/response"
 )
 
 func AuthRequired(c *fiber.Ctx) error {
@@ -50,9 +50,9 @@ func UserOnly(c *fiber.Ctx) error {
 func GuestOnly(c *fiber.Ctx) error {
 	tokenString := c.Cookies("token")
 	if tokenString != "" {
-		errorResponse := web.ErrorResponse{
-			Code:   fiber.StatusForbidden,
-			Status: "FORBIDDEN",
+		errorResponse := response.ErrorResponse{
+			Code:    fiber.StatusForbidden,
+			Message: "FORBIDDEN",
 		}
 		return c.Status(fiber.StatusForbidden).JSON(errorResponse)
 	}

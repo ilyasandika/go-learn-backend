@@ -10,13 +10,14 @@ import (
 	"uaspw2/exception"
 	"uaspw2/helper"
 	"uaspw2/models/entity"
-	"uaspw2/models/web"
+	"uaspw2/models/web/request"
+	"uaspw2/models/web/response"
 	"uaspw2/repositories"
 )
 
 type AuthService interface {
-	Login(ctx context.Context, request web.LoginRequest) string
-	RegisterUser(ctx context.Context, request web.RegisterRequest) web.UserResponse
+	Login(ctx context.Context, request request.LoginRequest) string
+	RegisterUser(ctx context.Context, request request.RegisterRequest) response.UserResponse
 }
 
 type AuthServicesImpl struct {
@@ -33,9 +34,9 @@ func NewAuthenticationServices(authRepository repositories.AuthRepository, db *s
 	}
 }
 
-var ExpiresTime = time.Now().Add(time.Hour * 24)
+var TokenExpiresTime = time.Now().Add(time.Hour * 24)
 
-func (service *AuthServicesImpl) Login(ctx context.Context, request web.LoginRequest) string {
+func (service *AuthServicesImpl) Login(ctx context.Context, request request.LoginRequest) string {
 	err := service.Validate.Struct(request)
 	helper.PanicIfErr(err)
 
@@ -44,7 +45,9 @@ func (service *AuthServicesImpl) Login(ctx context.Context, request web.LoginReq
 	defer helper.CommitOrRollback(tx)
 
 	user, err := service.AuthRepository.GetUserByUsername(ctx, tx, request.Username)
-	helper.PanicIfErr(err)
+	if err != nil {
+		panic(exception.NewInvalidCredentialsError("Invalid username or password"))
+	}
 
 	if helper.CheckPasswordHash(request.Password, user.Password) {
 		//generate token
@@ -53,7 +56,7 @@ func (service *AuthServicesImpl) Login(ctx context.Context, request web.LoginReq
 			Username: user.Username,
 			Role:     user.Role,
 			RegisteredClaims: jwt.RegisteredClaims{
-				ExpiresAt: jwt.NewNumericDate(ExpiresTime),
+				ExpiresAt: jwt.NewNumericDate(TokenExpiresTime),
 			},
 		}
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -62,11 +65,11 @@ func (service *AuthServicesImpl) Login(ctx context.Context, request web.LoginReq
 
 		return tokenString
 	} else {
-		panic(exception.NewInvalidCredentialsError("invalid username or password"))
+		panic(exception.NewInvalidCredentialsError("Invalid username or password"))
 	}
 }
 
-func (service *AuthServicesImpl) RegisterUser(ctx context.Context, request web.RegisterRequest) web.UserResponse {
+func (service *AuthServicesImpl) RegisterUser(ctx context.Context, request request.RegisterRequest) response.UserResponse {
 	err := service.Validate.Struct(request)
 	helper.PanicIfErr(err)
 
@@ -74,19 +77,23 @@ func (service *AuthServicesImpl) RegisterUser(ctx context.Context, request web.R
 	helper.PanicIfErr(err)
 	defer helper.CommitOrRollback(tx)
 
-	user := entity.User{
+	req := entity.User{
 		Username: request.Username,
 		Password: request.Password,
 		Role:     "user",
 	}
 
-	hashedPassword, err := helper.HashPassword(user.Password)
+	hashedPassword, err := helper.HashPassword(req.Password)
 	helper.PanicIfErr(err)
 
-	user.Password = hashedPassword
+	req.Password = hashedPassword
 
-	user = service.AuthRepository.RegisterUser(ctx, tx, user)
+	userRegister := service.AuthRepository.RegisterUser(ctx, tx, req)
+	req.Id = userRegister.Id
 
-	user, _ = service.AuthRepository.GetUserByUsername(ctx, tx, user.Username)
-	return helper.ToUserResponse(user)
+	userResponse, _ := service.AuthRepository.GetUserByUsername(ctx, tx, req.Username)
+
+	service.AuthRepository.CreateUserProfileOnRegisterUser(ctx, tx, req.Id)
+
+	return helper.ToUserResponse(userResponse)
 }

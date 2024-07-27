@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"uaspw2/exception"
 	"uaspw2/helper"
-	web2 "uaspw2/models/web"
+	"uaspw2/models/web/request"
+	"uaspw2/models/web/response"
 	"uaspw2/services"
 )
 
@@ -27,40 +29,44 @@ func NewUserController(service services.UserService) UserController {
 }
 
 func (controller *UserControllerImpl) UpdateByPath(c *fiber.Ctx) error {
-	request := web2.UserUpdateRequest{}
-	err := c.BodyParser(&request)
+	req := request.UserUpdateRequest{}
+	err := c.BodyParser(&req)
 	helper.PanicIfErr(err)
 
-	request.Id = helper.ToIntFromParams(c.Params("userId"))
+	req.Id = helper.ToIntFromParams(c.Params("userId"))
 
-	data := controller.service.Update(c.Context(), request)
-	successResponse := web2.SuccessResponse{
-		Code:   fiber.StatusOK,
-		Status: "SUCCESS",
-		Data:   data,
+	data := controller.service.Update(c.Context(), req)
+	webResponse := response.SuccessResponse{
+		Code:    fiber.StatusOK,
+		Message: "User updated successfully",
+		Data:    data,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(successResponse)
+	return c.Status(fiber.StatusOK).JSON(webResponse)
 }
 
 func (controller *UserControllerImpl) UpdateByToken(c *fiber.Ctx) error {
-	request := web2.UserUpdateRequest{}
-	err := c.BodyParser(&request)
+	req := request.UserUpdateRequest{}
+	err := c.BodyParser(&req)
 	helper.PanicIfErr(err)
 
 	user, err := helper.GetUserByToken(c)
 	helper.PanicIfErr(err)
 
-	request.Id = user.Id
-
-	data := controller.service.Update(c.Context(), request)
-	successResponse := web2.SuccessResponse{
-		Code:   fiber.StatusOK,
-		Status: "SUCCESS",
-		Data:   data,
+	if req.Role != user.Role && user.Role != "admin" {
+		panic(exception.NewInvalidCredentialsError("Only admin can update role"))
 	}
 
-	return c.Status(fiber.StatusOK).JSON(successResponse)
+	req.Id = user.Id
+
+	data := controller.service.Update(c.Context(), req)
+	webResponse := response.SuccessResponse{
+		Code:    fiber.StatusOK,
+		Message: "SUCCESS",
+		Data:    data,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(webResponse)
 }
 
 func (controller *UserControllerImpl) Delete(c *fiber.Ctx) error {
@@ -68,13 +74,13 @@ func (controller *UserControllerImpl) Delete(c *fiber.Ctx) error {
 
 	controller.service.Delete(c.Context(), userId)
 
-	successResponse := web2.SuccessResponse{
-		Code:   fiber.StatusOK,
-		Status: "SUCCESS",
-		Data:   nil,
+	webResponse := response.SuccessResponse{
+		Code:    fiber.StatusOK,
+		Message: "User deleted successfully",
+		Data:    nil,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(successResponse)
+	return c.Status(fiber.StatusOK).JSON(webResponse)
 }
 
 func (controller *UserControllerImpl) FindByPath(c *fiber.Ctx) error {
@@ -82,40 +88,40 @@ func (controller *UserControllerImpl) FindByPath(c *fiber.Ctx) error {
 
 	data := controller.service.FindByID(c.Context(), userId)
 
-	successResponse := web2.SuccessResponse{
-		Code:   fiber.StatusOK,
-		Status: "SUCCESS",
-		Data:   data,
+	webResponse := response.SuccessResponse{
+		Code:    fiber.StatusOK,
+		Message: "User found",
+		Data:    data,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(successResponse)
+	return c.Status(fiber.StatusOK).JSON(webResponse)
 }
 
 func (controller *UserControllerImpl) FindByToken(c *fiber.Ctx) error {
 	user, err := helper.GetUserByToken(c)
 	helper.PanicIfErr(err)
-	
+
 	userId := user.Id
 
 	data := controller.service.FindByID(c.Context(), userId)
 
-	successResponse := web2.SuccessResponse{
-		Code:   fiber.StatusOK,
-		Status: "SUCCESS",
-		Data:   data,
+	webResponse := response.SuccessResponse{
+		Code:    fiber.StatusOK,
+		Message: "User found",
+		Data:    data,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(successResponse)
+	return c.Status(fiber.StatusOK).JSON(webResponse)
 }
 
 func (controller *UserControllerImpl) FindAll(c *fiber.Ctx) error {
 	data := controller.service.FindAll(c.Context())
 
-	successResponse := web2.SuccessResponse{
-		Code:   fiber.StatusOK,
-		Status: "SUCCESS",
-		Data:   data,
+	webResponse := response.SuccessResponse{
+		Code:    fiber.StatusOK,
+		Message: "User list retrieved successfully",
+		Data:    data,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(successResponse)
+	return c.Status(fiber.StatusOK).JSON(webResponse)
 }

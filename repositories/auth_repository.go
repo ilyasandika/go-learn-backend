@@ -11,6 +11,7 @@ import (
 type AuthRepository interface {
 	GetUserByUsername(ctx context.Context, tx *sql.Tx, username string) (entity.User, error)
 	RegisterUser(ctx context.Context, tx *sql.Tx, request entity.User) entity.User
+	CreateUserProfileOnRegisterUser(ctx context.Context, tx *sql.Tx, userId int)
 }
 
 type AuthRepositoryImpl struct {
@@ -38,6 +39,7 @@ func (repository *AuthRepositoryImpl) GetUserByUsername(ctx context.Context, tx 
 
 func (repository *AuthRepositoryImpl) RegisterUser(ctx context.Context, tx *sql.Tx, user entity.User) entity.User {
 	SQL := `INSERT INTO users (username, password, role) VALUES (?, ?, ?)`
+
 	result, err := tx.ExecContext(ctx, SQL, user.Username, user.Password, user.Role)
 	helper.PanicIfErr(err)
 
@@ -47,4 +49,10 @@ func (repository *AuthRepositoryImpl) RegisterUser(ctx context.Context, tx *sql.
 	user.Id = int(lastInsertId)
 
 	return user
+}
+
+func (repository *AuthRepositoryImpl) CreateUserProfileOnRegisterUser(ctx context.Context, tx *sql.Tx, userId int) {
+	SQL := `INSERT INTO user_profiles (user_id) VALUES (?)`
+	_, err := tx.ExecContext(ctx, SQL, userId)
+	helper.PanicIfErr(err)
 }

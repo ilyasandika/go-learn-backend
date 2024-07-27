@@ -6,7 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
-	recover2 "github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"uaspw2/controllers"
 	"uaspw2/exception"
 	"uaspw2/repositories"
@@ -30,14 +30,19 @@ func main() {
 	userService := services.NewUserService(userRepository, db, validate)
 	userController := controllers.NewUserController(userService)
 
+	userProfileRepository := repositories.NewUserProfileRepository()
+	userProfileService := services.NewUserProfileService(userProfileRepository, db, validate)
+	userProfileController := controllers.NewUserProfileController(userProfileService)
+
 	authRepository := repositories.NewAuthenticationRepository()
 	authService := services.NewAuthenticationServices(authRepository, db, validate)
 	authController := controllers.NewAuthenticationController(authService)
 
-	app.Use(recover2.New())
+	app.Use(recover.New())
 
 	routes.SetupUserRoutes(app, userController)
 	routes.SetupAuthRoutes(app, authController)
+	routes.SetupUserProfileRoutes(app, userProfileController)
 
 	go func() {
 		if err := app.Listen(":3000"); err != nil {
@@ -45,7 +50,6 @@ func main() {
 		}
 	}()
 
-	// Log message when the server starts successfully
 	log.Info("Server is running on port 3000")
 	select {}
 }

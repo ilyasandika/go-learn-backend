@@ -4,7 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"uaspw2/config"
-	"uaspw2/models/web"
+	"uaspw2/models/web/response"
 )
 
 func VerifyToken(c *fiber.Ctx, claims jwt.Claims) (jwt.Claims, error) {
@@ -28,17 +28,17 @@ func VerifyToken(c *fiber.Ctx, claims jwt.Claims) (jwt.Claims, error) {
 }
 
 func HandleTokenError(c *fiber.Ctx) error {
-	errorResponse := web.ErrorResponse{
-		Code:   fiber.StatusUnauthorized,
-		Status: "UNAUTHORIZED",
+	errorResponse := response.ErrorResponse{
+		Code:    fiber.StatusUnauthorized,
+		Message: "Unauthorized",
 	}
 	return c.Status(fiber.StatusUnauthorized).JSON(errorResponse)
 }
 
-func GetUserByToken(c *fiber.Ctx) (web.UserUpdateRequest, error) {
+func GetUserByToken(c *fiber.Ctx) (config.UserClaims, error) {
 	userClaims := &config.UserClaims{}
 	token, err := VerifyToken(c, userClaims)
-	user := web.UserUpdateRequest{}
+	user := config.UserClaims{}
 
 	if err != nil {
 		return user, HandleTokenError(c)

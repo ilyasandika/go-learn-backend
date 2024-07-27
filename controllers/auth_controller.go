@@ -4,7 +4,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"time"
 	"uaspw2/helper"
-	"uaspw2/models/web"
+	"uaspw2/models/web/request"
+	"uaspw2/models/web/response"
 	"uaspw2/services"
 )
 
@@ -25,7 +26,7 @@ func NewAuthenticationController(authServices services.AuthService) AuthControll
 }
 
 func (controller *AuthControllerImpl) Login(c *fiber.Ctx) error {
-	request := web.LoginRequest{}
+	request := request.LoginRequest{}
 	err := c.BodyParser(&request)
 	helper.PanicIfErr(err)
 
@@ -35,15 +36,15 @@ func (controller *AuthControllerImpl) Login(c *fiber.Ctx) error {
 		Name:     "token",
 		Value:    token,
 		HTTPOnly: true,
-		Expires:  services.ExpiresTime,
+		Expires:  services.TokenExpiresTime,
 	})
 
-	response := web.SuccessResponse{
-		Code:   fiber.StatusOK,
-		Status: "LOGIN SUCCESSFUL",
-		Data:   nil,
+	webResponse := response.SuccessResponse{
+		Code:    fiber.StatusOK,
+		Message: "Login successfully",
+		Data:    nil,
 	}
-	return c.Status(fiber.StatusOK).JSON(response)
+	return c.Status(fiber.StatusOK).JSON(webResponse)
 }
 
 func (controller *AuthControllerImpl) Logout(c *fiber.Ctx) error {
@@ -54,27 +55,27 @@ func (controller *AuthControllerImpl) Logout(c *fiber.Ctx) error {
 		HTTPOnly: true,
 	})
 
-	response := web.SuccessResponse{
-		Code:   fiber.StatusOK,
-		Status: "LOGOUT SUCCESSFUL",
-		Data:   nil,
+	webResponse := response.SuccessResponse{
+		Code:    fiber.StatusOK,
+		Message: "Logout successfully",
+		Data:    nil,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(response)
+	return c.Status(fiber.StatusOK).JSON(webResponse)
 }
 
 func (controller *AuthControllerImpl) Register(c *fiber.Ctx) error {
-	request := web.RegisterRequest{}
+	request := request.RegisterRequest{}
 	err := c.BodyParser(&request)
 	helper.PanicIfErr(err)
 
 	user := controller.AuthService.RegisterUser(c.Context(), request)
 
-	response := web.SuccessResponse{
-		Code:   fiber.StatusOK,
-		Status: "REGISTER SUCCESSFUL",
-		Data:   user,
+	webResponse := response.SuccessResponse{
+		Code:    fiber.StatusOK,
+		Message: "Register successfully",
+		Data:    user,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(response)
+	return c.Status(fiber.StatusOK).JSON(webResponse)
 }

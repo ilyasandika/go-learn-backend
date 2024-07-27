@@ -1,0 +1,34 @@
+### Get All User (ADMIN)
+GET http://localhost:3000/api/users
+Accept: application/json
+
+### Get User By ID (ADMIN)
+GET http://localhost:3000/api/users/15
+Accept: application/json
+
+### Update user by ID (ADMIN)
+PUT http://localhost:3000/api/users/36
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "administrator2",
+    "role": "admin"
+}
+
+### Update user by token (AUTH)
+PUT http://localhost:3000/api/users
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "administrator2",
+    "role": "admin"
+}
+
+### Delete a User By ID (ADMIN)
+DELETE http://localhost:3000/api/users/20
+Accept: application/json
+
+
+

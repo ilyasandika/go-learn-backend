@@ -7,15 +7,16 @@ import (
 	"uaspw2/exception"
 	"uaspw2/helper"
 	"uaspw2/models/entity"
-	"uaspw2/models/web"
+	"uaspw2/models/web/request"
+	"uaspw2/models/web/response"
 	"uaspw2/repositories"
 )
 
 type UserService interface {
-	Update(ctx context.Context, request web.UserUpdateRequest) web.UserResponse
+	Update(ctx context.Context, request request.UserUpdateRequest) response.UserResponse
 	Delete(ctx context.Context, id int)
-	FindByID(ctx context.Context, id int) web.UserResponse
-	FindAll(ctx context.Context) []web.UserResponse
+	FindByID(ctx context.Context, id int) response.UserResponse
+	FindAll(ctx context.Context) []response.UserResponse
 }
 
 type UserServiceImpl struct {
@@ -32,7 +33,7 @@ func NewUserService(userRepository repositories.UserRepository, db *sql.DB, vali
 	}
 }
 
-func (service *UserServiceImpl) Update(ctx context.Context, request web.UserUpdateRequest) web.UserResponse {
+func (service *UserServiceImpl) Update(ctx context.Context, request request.UserUpdateRequest) response.UserResponse {
 	err := service.validate.Struct(request)
 	helper.PanicIfErr(err)
 
@@ -73,7 +74,7 @@ func (service *UserServiceImpl) Delete(ctx context.Context, id int) {
 	service.UserRepository.Delete(ctx, tx, user.Id)
 }
 
-func (service *UserServiceImpl) FindByID(ctx context.Context, id int) web.UserResponse {
+func (service *UserServiceImpl) FindByID(ctx context.Context, id int) response.UserResponse {
 	tx, err := service.DB.Begin()
 	helper.PanicIfErr(err)
 	defer helper.CommitOrRollback(tx)
@@ -86,7 +87,7 @@ func (service *UserServiceImpl) FindByID(ctx context.Context, id int) web.UserRe
 	return helper.ToUserResponse(user)
 }
 
-func (service *UserServiceImpl) FindAll(ctx context.Context) []web.UserResponse {
+func (service *UserServiceImpl) FindAll(ctx context.Context) []response.UserResponse {
 	tx, err := service.DB.Begin()
 	helper.PanicIfErr(err)
 	defer helper.CommitOrRollback(tx)
