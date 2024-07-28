@@ -12,6 +12,7 @@ type AuthRepository interface {
 	GetUserByUsername(ctx context.Context, tx *sql.Tx, username string) (entity.User, error)
 	RegisterUser(ctx context.Context, tx *sql.Tx, request entity.User) entity.User
 	CreateUserProfileOnRegisterUser(ctx context.Context, tx *sql.Tx, userId int)
+	CreateUserPhotoProfileOnRegisterUser(ctx context.Context, tx *sql.Tx, profile entity.UserProfilePhoto)
 }
 
 type AuthRepositoryImpl struct {
@@ -50,9 +51,14 @@ func (repository *AuthRepositoryImpl) RegisterUser(ctx context.Context, tx *sql.
 
 	return user
 }
-
 func (repository *AuthRepositoryImpl) CreateUserProfileOnRegisterUser(ctx context.Context, tx *sql.Tx, userId int) {
 	SQL := `INSERT INTO user_profiles (user_id) VALUES (?)`
 	_, err := tx.ExecContext(ctx, SQL, userId)
+	helper.PanicIfErr(err)
+}
+
+func (repository *AuthRepositoryImpl) CreateUserPhotoProfileOnRegisterUser(ctx context.Context, tx *sql.Tx, profile entity.UserProfilePhoto) {
+	SQL := `INSERT INTO user_profile_photos (user_id, path) VALUES (?,?)`
+	_, err := tx.ExecContext(ctx, SQL, profile.UserId, profile.Path)
 	helper.PanicIfErr(err)
 }

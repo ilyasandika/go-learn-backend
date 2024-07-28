@@ -22,8 +22,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "username": "administrator2",
-    "role": "admin"
+    "username": "triani123",
+    "role": "user"
 }
 
 ### Delete a User By ID (ADMIN)

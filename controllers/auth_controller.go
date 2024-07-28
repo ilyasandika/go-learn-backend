@@ -26,11 +26,11 @@ func NewAuthenticationController(authServices services.AuthService) AuthControll
 }
 
 func (controller *AuthControllerImpl) Login(c *fiber.Ctx) error {
-	request := request.LoginRequest{}
-	err := c.BodyParser(&request)
+	req := request.LoginRequest{}
+	err := c.BodyParser(&req)
 	helper.PanicIfErr(err)
 
-	token := controller.AuthService.Login(c.Context(), request)
+	token := controller.AuthService.Login(c.Context(), req)
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "token",
@@ -65,11 +65,11 @@ func (controller *AuthControllerImpl) Logout(c *fiber.Ctx) error {
 }
 
 func (controller *AuthControllerImpl) Register(c *fiber.Ctx) error {
-	request := request.RegisterRequest{}
-	err := c.BodyParser(&request)
+	req := request.RegisterRequest{}
+	err := c.BodyParser(&req)
 	helper.PanicIfErr(err)
 
-	user := controller.AuthService.RegisterUser(c.Context(), request)
+	user := controller.AuthService.RegisterUser(c.Context(), req)
 
 	webResponse := response.SuccessResponse{
 		Code:    fiber.StatusOK,

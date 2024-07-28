@@ -17,6 +17,7 @@ func SetupUserRoutes(app *fiber.App, controller controllers.UserController) {
 		userGroup.Put("/", middlewares.AuthRequired, controller.UpdateByToken)
 		userGroup.Delete("/:userId", middlewares.AdminOnly, controller.Delete)
 	}
+
 }
 
 func SetupAuthRoutes(app *fiber.App, controller controllers.AuthController) {
@@ -31,11 +32,23 @@ func SetupAuthRoutes(app *fiber.App, controller controllers.AuthController) {
 
 func SetupUserProfileRoutes(app *fiber.App, controller controllers.UserProfileController) {
 	apiGroup := app.Group("/api")
-	userGroup := apiGroup.Group("/user_profiles")
+	userProfileGroup := apiGroup.Group("/user_profiles")
 	{
-		userGroup.Get("/", middlewares.AdminOnly, controller.FindAll)
-		userGroup.Get("/details/:userId", middlewares.AuthRequired, controller.FindByPath)
-		userGroup.Get("/details", middlewares.AuthRequired, controller.FindByToken)
-		userGroup.Put("/details", middlewares.AuthRequired, controller.UpdateByToken)
+		userProfileGroup.Get("/", middlewares.AdminOnly, controller.FindAll)
+		userProfileGroup.Get("/details/:userId", middlewares.AuthRequired, controller.FindByPath)
+		userProfileGroup.Get("/details", middlewares.AuthRequired, controller.FindByToken)
+		userProfileGroup.Put("/details", middlewares.AuthRequired, controller.UpdateByToken)
+
+	}
+}
+
+func SetupUserProfilePhotoRoutes(app *fiber.App, controller controllers.UserProfilePhotoController) {
+	apiGroup := app.Group("/api")
+	userProfilePhoto := apiGroup.Group("/user_profile_photos")
+	{
+
+		userProfilePhoto.Get("/", middlewares.AuthRequired, controller.FindByToken)
+		userProfilePhoto.Put("/", middlewares.AuthRequired, controller.UpdateByToken)
+
 	}
 }

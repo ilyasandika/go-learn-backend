@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"time"
 	"uaspw2/controllers"
 	"uaspw2/exception"
 	"uaspw2/repositories"
@@ -24,6 +25,11 @@ func main() {
 		log.Fatalf("Error opening database connection: %v", err)
 	}
 
+	db.SetMaxIdleConns(5)
+	db.SetMaxOpenConns(20)
+	db.SetConnMaxLifetime(60 * time.Minute)
+	db.SetConnMaxIdleTime(10 * time.Minute)
+
 	validate := validator.New()
 
 	userRepository := repositories.NewUserRepository()
@@ -38,11 +44,17 @@ func main() {
 	authService := services.NewAuthenticationServices(authRepository, db, validate)
 	authController := controllers.NewAuthenticationController(authService)
 
+	userProfilePhotoRepository := repositories.NewUserProfilePhotoRepository()
+	userProfilePhotoService := services.NewUserProfilePhotoService(userProfilePhotoRepository, db, validate)
+	userProfilePhotoController := controllers.NewUserProfilePhotoController(userProfilePhotoService)
+
 	app.Use(recover.New())
+	app.Static("/", "./public")
 
 	routes.SetupUserRoutes(app, userController)
-	routes.SetupAuthRoutes(app, authController)
 	routes.SetupUserProfileRoutes(app, userProfileController)
+	routes.SetupUserProfilePhotoRoutes(app, userProfilePhotoController)
+	routes.SetupAuthRoutes(app, authController)
 
 	go func() {
 		if err := app.Listen(":3000"); err != nil {

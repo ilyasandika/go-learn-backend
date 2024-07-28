@@ -1,0 +1,16 @@
+### GET profile photo by Token
+GET http://localhost:3000/api/user_profile_photos
+Accept: application/json
+
+
+### UPDATE profile photo by Token
+PUT http://localhost:3000/api/user_profile_photos
+Accept: application/json
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="juniar.png"
+Content-Type: image/png
+
+< C:/Users/andik/Pictures/juniar.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW--

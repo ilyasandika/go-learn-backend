@@ -43,11 +43,15 @@ func (service *UserProfileServiceImpl) Update(ctx context.Context, request reque
 	if err != nil {
 		panic(exception.NewNotFoundError(err.Error()))
 	}
+	userProfile.FullName = request.FullName
+	userProfile.Address = request.Address
+	userProfile.Gender = request.Gender
+	userProfile.PhoneNumber = request.PhoneNumber
+	userProfile.BirthDate = request.BirthDate
 
-	data := service.UserProfileRepository.Update(ctx, tx, userProfile)
+	userProfile = service.UserProfileRepository.Update(ctx, service.DB, userProfile)
 
-	return helper.ToUserProfileResponse(data)
-
+	return helper.ToUserProfileResponse(userProfile)
 }
 
 func (service *UserProfileServiceImpl) FindByUserID(ctx context.Context, userId int) response.UserProfileResponse {

@@ -19,7 +19,7 @@ type UserProfileControllerImpl struct {
 	UserProfileService services.UserProfileService
 }
 
-func NewUserProfileController(userProfileService services.UserProfileService) *UserProfileControllerImpl {
+func NewUserProfileController(userProfileService services.UserProfileService) UserProfileController {
 	return &UserProfileControllerImpl{
 		UserProfileService: userProfileService,
 	}

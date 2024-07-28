@@ -47,6 +47,15 @@ func ToUserProfileResponses(userProfiles []entity.UserProfile) []response.UserPr
 	return userProfileResponses
 }
 
+func ToUserPhotoProfileResponse(userPhotoProfile entity.UserProfilePhoto) response.UserProfilePhotoResponse {
+	return response.UserProfilePhotoResponse{
+		UserId:    userPhotoProfile.UserId,
+		Path:      userPhotoProfile.Path,
+		CreatedAt: userPhotoProfile.CreatedAt,
+		UpdatedAt: userPhotoProfile.UpdatedAt,
+	}
+}
+
 func ToIntFromParams(params string) int {
 	id, err := strconv.Atoi(params)
 	if err != nil {

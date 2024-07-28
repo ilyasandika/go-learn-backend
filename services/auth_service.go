@@ -95,5 +95,11 @@ func (service *AuthServicesImpl) RegisterUser(ctx context.Context, request reque
 
 	service.AuthRepository.CreateUserProfileOnRegisterUser(ctx, tx, req.Id)
 
+	defaultPhotoProfile := entity.UserProfilePhoto{
+		UserId: req.Id,
+		Path:   "default_profile_photo.svg",
+	}
+	service.AuthRepository.CreateUserPhotoProfileOnRegisterUser(ctx, tx, defaultPhotoProfile)
+
 	return helper.ToUserResponse(userResponse)
 }
