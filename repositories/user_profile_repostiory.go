@@ -9,7 +9,7 @@ import (
 )
 
 type UserProfileRepository interface {
-	Update(ctx context.Context, tx *sql.DB, userProfile entity.UserProfile) entity.UserProfile
+	Update(ctx context.Context, tx *sql.Tx, userProfile entity.UserProfile) entity.UserProfile
 	Delete(ctx context.Context, tx *sql.Tx, userId int)
 	FindByUserID(ctx context.Context, tx *sql.Tx, userId int) (entity.UserProfile, error)
 	FindAll(ctx context.Context, tx *sql.Tx) []entity.UserProfile
@@ -22,7 +22,7 @@ func NewUserProfileRepository() UserProfileRepository {
 	return &UserProfileRepositoryImpl{}
 }
 
-func (repository *UserProfileRepositoryImpl) Update(ctx context.Context, tx *sql.DB, userProfile entity.UserProfile) entity.UserProfile {
+func (repository *UserProfileRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, userProfile entity.UserProfile) entity.UserProfile {
 	SQL := `UPDATE user_profiles SET full_name = ?, gender = ?, birthdate = ?, phone_number = ?, address = ?  WHERE user_id = ?`
 	_, err := tx.ExecContext(ctx, SQL, userProfile.FullName, userProfile.Gender, userProfile.BirthDate, userProfile.PhoneNumber, userProfile.Address, userProfile.UserId)
 	helper.PanicIfErr(err)
@@ -40,6 +40,7 @@ func (repository *UserProfileRepositoryImpl) FindByUserID(ctx context.Context, t
 	SQL := `SELECT user_id, full_name, gender, birthdate, phone_number, address, created_at, updated_at FROM user_profiles WHERE user_id = ?`
 	row, err := tx.QueryContext(ctx, SQL, id)
 	helper.PanicIfErr(err)
+	defer row.Close()
 
 	var user entity.UserProfile
 	if row.Next() {

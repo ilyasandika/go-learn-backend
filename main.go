@@ -48,6 +48,10 @@ func main() {
 	userProfilePhotoService := services.NewUserProfilePhotoService(userProfilePhotoRepository, db, validate)
 	userProfilePhotoController := controllers.NewUserProfilePhotoController(userProfilePhotoService)
 
+	articleRepository := repositories.NewArticleRepository()
+	articleService := services.NewArticleService(articleRepository, db, validate)
+	articleController := controllers.NewArticleController(articleService)
+
 	app.Use(recover.New())
 	app.Static("/", "./public")
 
@@ -55,6 +59,7 @@ func main() {
 	routes.SetupUserProfileRoutes(app, userProfileController)
 	routes.SetupUserProfilePhotoRoutes(app, userProfilePhotoController)
 	routes.SetupAuthRoutes(app, authController)
+	routes.SetupArticlePhotoRoutes(app, articleController)
 
 	go func() {
 		if err := app.Listen(":3000"); err != nil {

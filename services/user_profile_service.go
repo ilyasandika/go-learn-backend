@@ -49,7 +49,7 @@ func (service *UserProfileServiceImpl) Update(ctx context.Context, request reque
 	userProfile.PhoneNumber = request.PhoneNumber
 	userProfile.BirthDate = request.BirthDate
 
-	userProfile = service.UserProfileRepository.Update(ctx, service.DB, userProfile)
+	userProfile = service.UserProfileRepository.Update(ctx, tx, userProfile)
 
 	return helper.ToUserProfileResponse(userProfile)
 }

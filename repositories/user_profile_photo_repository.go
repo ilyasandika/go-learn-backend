@@ -32,6 +32,7 @@ func (repository *UserProfilePhotoRepositoryImpl) FindByUserID(ctx context.Conte
 	SQL := `SELECT user_id, path, created_at, updated_at FROM user_profile_photos WHERE user_id = ?`
 	row, err := tx.QueryContext(ctx, SQL, userId)
 	helper.PanicIfErr(err)
+	defer row.Close()
 
 	var profiles entity.UserProfilePhoto
 	if row.Next() {

@@ -46,9 +46,25 @@ func SetupUserProfilePhotoRoutes(app *fiber.App, controller controllers.UserProf
 	apiGroup := app.Group("/api")
 	userProfilePhoto := apiGroup.Group("/user_profile_photos")
 	{
-
 		userProfilePhoto.Get("/", middlewares.AuthRequired, controller.FindByToken)
 		userProfilePhoto.Put("/", middlewares.AuthRequired, controller.UpdateByToken)
+	}
+}
 
+func SetupArticlePhotoRoutes(app *fiber.App, controller controllers.ArticleController) {
+	apiGroup := app.Group("/api")
+	articleGroup := apiGroup.Group("/articles")
+	{
+		articleGroup.Get("/", middlewares.AdminOnly, controller.FindAll)
+		articleGroup.Post("/", middlewares.UserOnly, controller.CreateByToken)
+		articleGroup.Get("/published", middlewares.AuthRequired, controller.FindAllPublished)
+		articleGroup.Get("/published/users/:userId", middlewares.AuthRequired, controller.FindAllPublishedByUserID)
+		articleGroup.Get("/published/details/:articleId", middlewares.AuthRequired, controller.FindPublishedByID)
+		articleGroup.Get("/unpublished", middlewares.AdminOnly, controller.FindAllUnpublished)
+		articleGroup.Get("/unpublished/users/:userId", middlewares.AuthRequired, controller.FindAllUnPublishedByUserID)
+		articleGroup.Get("/users/:userId", middlewares.AuthRequired, controller.FindByUserId)
+		articleGroup.Get("/:articleId", middlewares.AuthRequired, controller.FindByID)
+		articleGroup.Put("/:articleId", middlewares.UserOnly, controller.UpdateByID)
+		articleGroup.Delete("/:articleId", middlewares.AuthRequired, controller.DeleteByID)
 	}
 }

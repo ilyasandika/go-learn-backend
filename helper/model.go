@@ -56,6 +56,26 @@ func ToUserPhotoProfileResponse(userPhotoProfile entity.UserProfilePhoto) respon
 	}
 }
 
+func ToArticleResponse(article entity.Article) response.ArticleResponse {
+	return response.ArticleResponse{
+		Id:          article.Id,
+		UserId:      article.UserId,
+		Title:       article.Title,
+		Description: article.Description,
+		IsPublished: article.IsPublished,
+		CreatedAt:   article.CreatedAt,
+		UpdatedAt:   article.UpdatedAt,
+	}
+}
+
+func ToArticleResponses(articles []entity.Article) []response.ArticleResponse {
+	var articleResponses []response.ArticleResponse
+	for _, article := range articles {
+		articleResponses = append(articleResponses, ToArticleResponse(article))
+	}
+	return articleResponses
+}
+
 func ToIntFromParams(params string) int {
 	id, err := strconv.Atoi(params)
 	if err != nil {
