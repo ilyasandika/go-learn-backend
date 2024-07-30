@@ -68,3 +68,14 @@ func SetupArticlePhotoRoutes(app *fiber.App, controller controllers.ArticleContr
 		articleGroup.Delete("/:articleId", middlewares.AuthRequired, controller.DeleteByID)
 	}
 }
+
+func SetupLikeRoutes(app *fiber.App, controller controllers.LikeController) {
+	apiGroup := app.Group("/api")
+	likeGroup := apiGroup.Group("/likes")
+	{
+		likeGroup.Get("/articles/:articleId", middlewares.AuthRequired, controller.FindByArticleId)
+		likeGroup.Post("/articles/:articleId", middlewares.UserOnly, controller.Create)
+		likeGroup.Delete("/articles/:articleId", middlewares.UserOnly, controller.Delete)
+		likeGroup.Get("/users/:userId", middlewares.AuthRequired, controller.FindByUserId)
+	}
+}
