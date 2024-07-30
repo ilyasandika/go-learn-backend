@@ -4,7 +4,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"uaspw2/helper"
 	"uaspw2/models/web/request"
-	"uaspw2/models/web/response"
 	"uaspw2/services"
 )
 
@@ -37,13 +36,9 @@ func (controller *likeControllerImpl) Create(c *fiber.Ctx) error {
 	}
 	data := controller.LikeService.Create(c.Context(), req)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusCreated,
-		Message: "like successfully",
-		Data:    data,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusCreated, "like successfully", data)
 
-	return c.Status(fiber.StatusCreated).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *likeControllerImpl) Delete(c *fiber.Ctx) error {
@@ -58,14 +53,9 @@ func (controller *likeControllerImpl) Delete(c *fiber.Ctx) error {
 	}
 	controller.LikeService.Delete(c.Context(), req)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "unlike successfully",
-		Data:    nil,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "unlike successfully", nil)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
-
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *likeControllerImpl) FindByArticleId(c *fiber.Ctx) error {
@@ -73,13 +63,9 @@ func (controller *likeControllerImpl) FindByArticleId(c *fiber.Ctx) error {
 
 	data := controller.LikeService.FindByArticleID(c.Context(), articleId)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "like list by article retrieved successfully",
-		Data:    data,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "like list by article retrieved successfully", data)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *likeControllerImpl) FindByUserId(c *fiber.Ctx) error {
@@ -87,11 +73,7 @@ func (controller *likeControllerImpl) FindByUserId(c *fiber.Ctx) error {
 
 	data := controller.LikeService.FindByUserID(c.Context(), userId)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "like list by user retrieved successfully",
-		Data:    data,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "like list by user retrieved successfully", data)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }

@@ -5,7 +5,6 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 	"uaspw2/helper"
 	"uaspw2/models/web/request"
-	"uaspw2/models/web/response"
 	"uaspw2/services"
 )
 
@@ -20,7 +19,7 @@ type ArticleController interface {
 	FindAllPublishedByUserID(c *fiber.Ctx) error
 	FindPublishedByID(c *fiber.Ctx) error
 	FindAllUnpublished(c *fiber.Ctx) error
-	FindAllUnPublishedByUserID(c *fiber.Ctx) error
+	FindAllUnpublishedByUserID(c *fiber.Ctx) error
 }
 
 type ArticleControllerImpl struct {
@@ -46,12 +45,8 @@ func (controller *ArticleControllerImpl) CreateByToken(c *fiber.Ctx) error {
 
 	article := controller.ArticleService.Create(c.Context(), req)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusCreated,
-		Message: "article created successfully",
-		Data:    article,
-	}
-	return c.Status(fiber.StatusCreated).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusCreated, "article created successfully", article)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *ArticleControllerImpl) UpdateByID(c *fiber.Ctx) error {
@@ -68,24 +63,16 @@ func (controller *ArticleControllerImpl) UpdateByID(c *fiber.Ctx) error {
 	req.Id = articleId
 
 	if user.Role != "admin" && req.IsPublished == true {
-		webResponse := response.ErrorResponse{
-			Code:    fiber.StatusUnauthorized,
-			Message: "unauthorized",
-			Error:   "You are not allowed to publish this article",
-		}
-		return c.Status(fiber.StatusUnauthorized).JSON(webResponse)
+		webResponse := helper.CreateErrorResponse(fiber.StatusUnauthorized, "unauthorized", "you are not allowed to publish this article")
+		return c.Status(webResponse.Code).JSON(webResponse)
 	}
 
 	log.Info(req)
 
 	article := controller.ArticleService.Update(c.Context(), req)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "article updated successfully",
-		Data:    article,
-	}
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "article updated successfully", article)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *ArticleControllerImpl) DeleteByID(c *fiber.Ctx) error {
@@ -93,102 +80,63 @@ func (controller *ArticleControllerImpl) DeleteByID(c *fiber.Ctx) error {
 
 	controller.ArticleService.Delete(c.Context(), articleId)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "article deleted successfully",
-		Data:    nil,
-	}
-
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "article deleted successfully", nil)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *ArticleControllerImpl) FindByUserId(c *fiber.Ctx) error {
 	userId := helper.ToIntFromParams(c.Params("userId"))
 
 	articles := controller.ArticleService.FindByUserID(c.Context(), userId)
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "articles list by user retrieved successfully",
-		Data:    articles,
-	}
-
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "articles list by user retrieved successfully", articles)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *ArticleControllerImpl) FindByID(c *fiber.Ctx) error {
 	articleId := helper.ToIntFromParams(c.Params("articleId"))
 
 	articles := controller.ArticleService.FindByID(c.Context(), articleId)
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "article found",
-		Data:    articles,
-	}
-
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "article found", articles)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *ArticleControllerImpl) FindAll(c *fiber.Ctx) error {
 	articles := controller.ArticleService.FindAll(c.Context())
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "articles list retrieved successfully",
-		Data:    articles,
-	}
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "articles list retrieved successfully", articles)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *ArticleControllerImpl) FindAllPublished(c *fiber.Ctx) error {
 	articles := controller.ArticleService.FindAllPublished(c.Context())
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "published articles list retrieved successfully",
-		Data:    articles,
-	}
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "published articles list retrieved successfully", articles)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *ArticleControllerImpl) FindAllPublishedByUserID(c *fiber.Ctx) error {
 	userId := helper.ToIntFromParams(c.Params("userId"))
 
 	articles := controller.ArticleService.FindAllPublishedByUserID(c.Context(), userId)
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "published articles list by user retrieved successfully",
-		Data:    articles,
-	}
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "published articles list by user retrieved successfully", articles)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *ArticleControllerImpl) FindPublishedByID(c *fiber.Ctx) error {
 	articleId := helper.ToIntFromParams(c.Params("articleId"))
 	article := controller.ArticleService.FindPublishedByID(c.Context(), articleId)
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "published article found",
-		Data:    article,
-	}
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "published article found", article)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *ArticleControllerImpl) FindAllUnpublished(c *fiber.Ctx) error {
 	articles := controller.ArticleService.FindAllUnpublished(c.Context())
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "unpublished articles list retrieved successfully",
-		Data:    articles,
-	}
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "unpublished articles list retrieved successfully", articles)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
-func (controller *ArticleControllerImpl) FindAllUnPublishedByUserID(c *fiber.Ctx) error {
+func (controller *ArticleControllerImpl) FindAllUnpublishedByUserID(c *fiber.Ctx) error {
 	userId := helper.ToIntFromParams(c.Params("userId"))
 
 	articles := controller.ArticleService.FindAllUnpublishedByUserID(c.Context(), userId)
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "published articles list by user retrieved successfully",
-		Data:    articles,
-	}
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "unpublished articles list by user retrieved successfully", articles)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }

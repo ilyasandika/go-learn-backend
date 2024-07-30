@@ -10,7 +10,6 @@ import (
 	"time"
 	"uaspw2/helper"
 	"uaspw2/models/web/request"
-	"uaspw2/models/web/response"
 	"uaspw2/services"
 )
 
@@ -83,12 +82,9 @@ func (controller *UserProfilePhotoControllerImpl) UpdateByToken(c *fiber.Ctx) er
 		helper.PanicIfErr(err)
 	}
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "user profile photo updated successfully",
-		Data:    result,
-	}
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "user profile photo updated successfully", result)
+
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *UserProfilePhotoControllerImpl) FindByToken(c *fiber.Ctx) error {
@@ -97,11 +93,7 @@ func (controller *UserProfilePhotoControllerImpl) FindByToken(c *fiber.Ctx) erro
 
 	profile := controller.UserProfilePhotoService.FindByUserId(c.Context(), user.Id)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "user profile photo found",
-		Data:    profile,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "user profile photo found successfully", profile)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }

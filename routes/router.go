@@ -61,7 +61,7 @@ func SetupArticlePhotoRoutes(app *fiber.App, controller controllers.ArticleContr
 		articleGroup.Get("/published/users/:userId", middlewares.AuthRequired, controller.FindAllPublishedByUserID)
 		articleGroup.Get("/published/details/:articleId", middlewares.AuthRequired, controller.FindPublishedByID)
 		articleGroup.Get("/unpublished", middlewares.AdminOnly, controller.FindAllUnpublished)
-		articleGroup.Get("/unpublished/users/:userId", middlewares.AuthRequired, controller.FindAllUnPublishedByUserID)
+		articleGroup.Get("/unpublished/users/:userId", middlewares.AuthRequired, controller.FindAllUnpublishedByUserID)
 		articleGroup.Get("/users/:userId", middlewares.AuthRequired, controller.FindByUserId)
 		articleGroup.Get("/:articleId", middlewares.AuthRequired, controller.FindByID)
 		articleGroup.Put("/:articleId", middlewares.UserOnly, controller.UpdateByID)
@@ -77,5 +77,15 @@ func SetupLikeRoutes(app *fiber.App, controller controllers.LikeController) {
 		likeGroup.Post("/articles/:articleId", middlewares.UserOnly, controller.Create)
 		likeGroup.Delete("/articles/:articleId", middlewares.UserOnly, controller.Delete)
 		likeGroup.Get("/users/:userId", middlewares.AuthRequired, controller.FindByUserId)
+	}
+}
+
+func SetupCommentRoutes(app *fiber.App, controller controllers.CommentController) {
+	apiGroup := app.Group("/api")
+	likeGroup := apiGroup.Group("/comments")
+	{
+		likeGroup.Get("/articles/:articleId", middlewares.AuthRequired, controller.FindByArticleId)
+		likeGroup.Post("/articles/:articleId", middlewares.UserOnly, controller.Create)
+		likeGroup.Delete("/:commentId", middlewares.UserOnly, controller.Delete)
 	}
 }

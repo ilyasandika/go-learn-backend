@@ -4,7 +4,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"uaspw2/helper"
 	"uaspw2/models/web/request"
-	"uaspw2/models/web/response"
 	"uaspw2/services"
 )
 
@@ -28,13 +27,9 @@ func NewUserProfileController(userProfileService services.UserProfileService) Us
 func (controller *UserProfileControllerImpl) FindAll(c *fiber.Ctx) error {
 	data := controller.UserProfileService.FindAll(c.Context())
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "User profile list retrieved successfully",
-		Data:    data,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "User profile list retrieved successfully", data)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *UserProfileControllerImpl) FindByToken(c *fiber.Ctx) error {
@@ -43,26 +38,18 @@ func (controller *UserProfileControllerImpl) FindByToken(c *fiber.Ctx) error {
 
 	data := controller.UserProfileService.FindByUserID(c.Context(), user.Id)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "User profile found",
-		Data:    data,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "User profile found", data)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *UserProfileControllerImpl) FindByPath(c *fiber.Ctx) error {
 	userId := helper.ToIntFromParams(c.Params("userId"))
 
 	data := controller.UserProfileService.FindByUserID(c.Context(), userId)
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "User profile found",
-		Data:    data,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "User profile found", data)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *UserProfileControllerImpl) UpdateByToken(c *fiber.Ctx) error {
@@ -76,11 +63,7 @@ func (controller *UserProfileControllerImpl) UpdateByToken(c *fiber.Ctx) error {
 	req.UserId = user.Id
 
 	data := controller.UserProfileService.Update(c.Context(), req)
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "User profile updated successfully",
-		Data:    data,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "User profile updated successfully", data)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }

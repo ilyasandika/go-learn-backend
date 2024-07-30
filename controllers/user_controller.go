@@ -5,7 +5,6 @@ import (
 	"uaspw2/exception"
 	"uaspw2/helper"
 	"uaspw2/models/web/request"
-	"uaspw2/models/web/response"
 	"uaspw2/services"
 )
 
@@ -36,13 +35,9 @@ func (controller *UserControllerImpl) UpdateByPath(c *fiber.Ctx) error {
 	req.Id = helper.ToIntFromParams(c.Params("userId"))
 
 	data := controller.service.Update(c.Context(), req)
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "User updated successfully",
-		Data:    data,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "user updated successfully", data)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *UserControllerImpl) UpdateByToken(c *fiber.Ctx) error {
@@ -54,19 +49,15 @@ func (controller *UserControllerImpl) UpdateByToken(c *fiber.Ctx) error {
 	helper.PanicIfErr(err)
 
 	if req.Role != user.Role && user.Role != "admin" {
-		panic(exception.NewInvalidCredentialsError("Only admin can update role"))
+		panic(exception.NewInvalidCredentialsError("only admin can update role"))
 	}
 
 	req.Id = user.Id
 
 	data := controller.service.Update(c.Context(), req)
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "SUCCESS",
-		Data:    data,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "user updated successfully", data)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *UserControllerImpl) Delete(c *fiber.Ctx) error {
@@ -74,13 +65,9 @@ func (controller *UserControllerImpl) Delete(c *fiber.Ctx) error {
 
 	controller.service.Delete(c.Context(), userId)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "User deleted successfully",
-		Data:    nil,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "user deleted successfully", nil)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *UserControllerImpl) FindByPath(c *fiber.Ctx) error {
@@ -88,13 +75,9 @@ func (controller *UserControllerImpl) FindByPath(c *fiber.Ctx) error {
 
 	data := controller.service.FindByID(c.Context(), userId)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "User found",
-		Data:    data,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "user found", data)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *UserControllerImpl) FindByToken(c *fiber.Ctx) error {
@@ -105,23 +88,15 @@ func (controller *UserControllerImpl) FindByToken(c *fiber.Ctx) error {
 
 	data := controller.service.FindByID(c.Context(), userId)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "User found",
-		Data:    data,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "user found", data)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *UserControllerImpl) FindAll(c *fiber.Ctx) error {
 	data := controller.service.FindAll(c.Context())
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "User list retrieved successfully",
-		Data:    data,
-	}
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "user list retrieved successfully", data)
 
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }

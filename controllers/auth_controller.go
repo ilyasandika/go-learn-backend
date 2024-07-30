@@ -5,7 +5,6 @@ import (
 	"time"
 	"uaspw2/helper"
 	"uaspw2/models/web/request"
-	"uaspw2/models/web/response"
 	"uaspw2/services"
 )
 
@@ -39,12 +38,8 @@ func (controller *AuthControllerImpl) Login(c *fiber.Ctx) error {
 		Expires:  services.TokenExpiresTime,
 	})
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "Login successfully",
-		Data:    nil,
-	}
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "login successfully", nil)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *AuthControllerImpl) Logout(c *fiber.Ctx) error {
@@ -55,13 +50,8 @@ func (controller *AuthControllerImpl) Logout(c *fiber.Ctx) error {
 		HTTPOnly: true,
 	})
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "Logout successfully",
-		Data:    nil,
-	}
-
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "logout successfully", nil)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }
 
 func (controller *AuthControllerImpl) Register(c *fiber.Ctx) error {
@@ -71,11 +61,6 @@ func (controller *AuthControllerImpl) Register(c *fiber.Ctx) error {
 
 	user := controller.AuthService.RegisterUser(c.Context(), req)
 
-	webResponse := response.SuccessResponse{
-		Code:    fiber.StatusOK,
-		Message: "Register successfully",
-		Data:    user,
-	}
-
-	return c.Status(fiber.StatusOK).JSON(webResponse)
+	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "register successfully", user)
+	return c.Status(webResponse.Code).JSON(webResponse)
 }

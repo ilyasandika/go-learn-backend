@@ -56,6 +56,10 @@ func main() {
 	likeService := services.NewLikeService(likeRepository, db, validate)
 	likeController := controllers.NewLikeController(likeService)
 
+	commentRepository := repositories.NewCommentRepository()
+	commentService := services.NewCommentService(commentRepository, db, validate)
+	commentController := controllers.NewCommentController(commentService)
+
 	app.Use(recover.New())
 	app.Static("/", "./public")
 
@@ -65,6 +69,7 @@ func main() {
 	routes.SetupAuthRoutes(app, authController)
 	routes.SetupArticlePhotoRoutes(app, articleController)
 	routes.SetupLikeRoutes(app, likeController)
+	routes.SetupCommentRoutes(app, commentController)
 
 	go func() {
 		if err := app.Listen(":3000"); err != nil {

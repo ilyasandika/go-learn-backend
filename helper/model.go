@@ -94,6 +94,25 @@ func ToLikeResponses(likes []entity.Like) []response.LikeResponse {
 	return likeResponses
 }
 
+func ToCommentResponse(comment entity.Comment) response.CommentResponse {
+	return response.CommentResponse{
+		Id:        comment.Id,
+		UserId:    comment.UserId,
+		ArticleId: comment.ArticleId,
+		Comment:   comment.Comment,
+		CreatedAt: comment.CreatedAt,
+		UpdatedAt: comment.UpdatedAt,
+	}
+}
+
+func ToCommentResponses(comments []entity.Comment) []response.CommentResponse {
+	var commentResponses []response.CommentResponse
+	for _, comment := range comments {
+		commentResponses = append(commentResponses, ToCommentResponse(comment))
+	}
+	return commentResponses
+}
+
 func ToIntFromParams(params string) int {
 	id, err := strconv.Atoi(params)
 	if err != nil {
