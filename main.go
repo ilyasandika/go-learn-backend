@@ -1,3 +1,9 @@
+//Kelompok 12
+//Ilyas Andika,220401070205
+//Triani Purnama Sari, 220401070206
+//Husnul Alfaini, 230401020040
+//Yusuf Agung Tri Wibowo, 230401020007
+
 package main
 
 import (
@@ -17,6 +23,7 @@ import (
 )
 
 func main() {
+
 	app := fiber.New(fiber.Config{
 		ErrorHandler: exception.ErrorHandler,
 	})
