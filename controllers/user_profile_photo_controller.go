@@ -75,6 +75,7 @@ func (controller *UserProfilePhotoControllerImpl) UpdateByToken(c *fiber.Ctx) er
 		UserId: user.Id,
 		Path:   fileName,
 	}
+
 	result := controller.UserProfilePhotoService.UpdateByUserId(c.Context(), userProfilePhoto)
 
 	if profile.Path != "default_profile_photo.svg" {

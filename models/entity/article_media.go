@@ -1,11 +1,10 @@
 package entity
 
-type Comment struct {
+type ArticleMedia struct {
 	Id        int    `json:"id"`
-	UserId    int    `json:"user_id"`
 	ArticleId int    `json:"article_id"`
-	Comment   string `json:"comment"`
-	Author    string `json:"author"`
+	Type      string `json:"type"`
+	Path      string `json:"path"`
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 }

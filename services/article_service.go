@@ -13,17 +13,15 @@ import (
 )
 
 type ArticleService interface {
-	Create(ctx context.Context, request request.ArticleCreateRequest) response.ArticleResponse
+	Create(ctx context.Context, request request.ArticleCreateRequest, mediaRequests []request.ArticleMediaCreateRequest) response.ArticleResponse
 	Update(ctx context.Context, request request.ArticleUpdateRequest) response.ArticleResponse
 	Delete(ctx context.Context, articleId int)
 	FindByID(ctx context.Context, articleId int) response.ArticleResponse
-	FindByUserID(ctx context.Context, userId int) []response.ArticleResponse
-	FindAll(ctx context.Context) []response.ArticleResponse
 	FindAllPublished(ctx context.Context) []response.ArticleResponse
 	FindAllPublishedByUserID(ctx context.Context, userId int) []response.ArticleResponse
-	FindPublishedByID(ctx context.Context, articleId int) response.ArticleResponse
 	FindAllUnpublished(ctx context.Context) []response.ArticleResponse
 	FindAllUnpublishedByUserID(ctx context.Context, userId int) []response.ArticleResponse
+	UpdateStatusArticleByID(ctx context.Context, articleId int, status bool)
 }
 
 type ArticleServiceImpl struct {
@@ -40,7 +38,14 @@ func NewArticleService(articleRepository repositories.ArticleRepository, db *sql
 	}
 }
 
-func (service *ArticleServiceImpl) Create(ctx context.Context, request request.ArticleCreateRequest) response.ArticleResponse {
+func (service *ArticleServiceImpl) UpdateStatusArticleByID(ctx context.Context, articleId int, status bool) {
+	tx, err := service.DB.Begin()
+	helper.PanicIfErr(err)
+	defer helper.CommitOrRollback(tx)
+	service.ArticleRepository.UpdatePublishStatus(ctx, tx, articleId, status)
+}
+
+func (service *ArticleServiceImpl) Create(ctx context.Context, request request.ArticleCreateRequest, mediaRequests []request.ArticleMediaCreateRequest) response.ArticleResponse {
 	err := service.Validate.Struct(request)
 	helper.PanicIfErr(err)
 
@@ -52,15 +57,25 @@ func (service *ArticleServiceImpl) Create(ctx context.Context, request request.A
 		UserId:      request.UserId,
 		Title:       request.Title,
 		Description: request.Description,
+		Content:     request.Content,
 		IsPublished: request.IsPublished,
 	}
 
 	data := service.ArticleRepository.Create(ctx, tx, req)
 	article, err := service.ArticleRepository.FindByID(ctx, tx, data.Id)
+
 	helper.PanicIfErr(err)
 
-	return helper.ToArticleResponse(article)
+	for _, media := range mediaRequests {
+		mediaReq := entity.ArticleMedia{
+			ArticleId: data.Id,
+			Type:      media.Type,
+			Path:      media.Path,
+		}
+		service.ArticleRepository.CreateMedia(ctx, tx, mediaReq)
+	}
 
+	return helper.ToArticleResponse(article)
 }
 
 func (service *ArticleServiceImpl) Update(ctx context.Context, request request.ArticleUpdateRequest) response.ArticleResponse {
@@ -117,26 +132,6 @@ func (service *ArticleServiceImpl) FindByID(ctx context.Context, articleId int) 
 	return helper.ToArticleResponse(article)
 }
 
-func (service *ArticleServiceImpl) FindByUserID(ctx context.Context, userId int) []response.ArticleResponse {
-	tx, err := service.DB.Begin()
-	helper.PanicIfErr(err)
-	defer helper.CommitOrRollback(tx)
-
-	articles := service.ArticleRepository.FindByUserID(ctx, tx, userId)
-
-	return helper.ToArticleResponses(articles)
-}
-
-func (service *ArticleServiceImpl) FindAll(ctx context.Context) []response.ArticleResponse {
-	tx, err := service.DB.Begin()
-	helper.PanicIfErr(err)
-	defer helper.CommitOrRollback(tx)
-
-	articles := service.ArticleRepository.FindAll(ctx, tx)
-
-	return helper.ToArticleResponses(articles)
-}
-
 func (service *ArticleServiceImpl) FindAllPublished(ctx context.Context) []response.ArticleResponse {
 	tx, err := service.DB.Begin()
 	helper.PanicIfErr(err)
@@ -155,17 +150,6 @@ func (service *ArticleServiceImpl) FindAllPublishedByUserID(ctx context.Context,
 	articles := service.ArticleRepository.FindAllByPublishStatusAndUserID(ctx, tx, true, userId)
 
 	return helper.ToArticleResponses(articles)
-}
-
-func (service *ArticleServiceImpl) FindPublishedByID(ctx context.Context, articleId int) response.ArticleResponse {
-	tx, err := service.DB.Begin()
-	helper.PanicIfErr(err)
-	defer helper.CommitOrRollback(tx)
-
-	article, err := service.ArticleRepository.FindByPublishStatusAndID(ctx, tx, true, articleId)
-	helper.PanicIfNotFound(err, "article not found or unpublished")
-
-	return helper.ToArticleResponse(article)
 }
 
 func (service *ArticleServiceImpl) FindAllUnpublished(ctx context.Context) []response.ArticleResponse {

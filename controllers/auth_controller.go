@@ -12,6 +12,7 @@ type AuthController interface {
 	Login(c *fiber.Ctx) error
 	Logout(c *fiber.Ctx) error
 	Register(c *fiber.Ctx) error
+	VerifyAuth(c *fiber.Ctx) error
 }
 
 type AuthControllerImpl struct {
@@ -63,4 +64,14 @@ func (controller *AuthControllerImpl) Register(c *fiber.Ctx) error {
 
 	webResponse := helper.CreateSuccessResponse(fiber.StatusOK, "register successfully", user)
 	return c.Status(webResponse.Code).JSON(webResponse)
+}
+
+func (controller *AuthControllerImpl) VerifyAuth(c *fiber.Ctx) error {
+	user, err := helper.GetUserByToken(c)
+	helper.PanicIfErr(err)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"username": user.Username,
+		"id":       user.Id,
+		"role":     user.Role,
+	})
 }

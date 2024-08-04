@@ -52,7 +52,23 @@ func (c CommentRepositoryImpl) FindByID(ctx context.Context, tx *sql.Tx, comment
 }
 
 func (c CommentRepositoryImpl) FindByArticleID(ctx context.Context, tx *sql.Tx, articleId int) []entity.Comment {
-	SQL := `SELECT id, user_id, article_id, comment, created_at, updated_at FROM comments WHERE article_id = ?`
+	SQL := `SELECT 
+				comments.id,
+				comments.user_id,
+				comments.article_id,
+				comments.comment,
+				comments.created_at,
+				comments.updated_at,
+				user_profiles.full_name
+			FROM 
+				comments
+			JOIN 
+				user_profiles
+			ON 
+				comments.user_id = user_profiles.user_id
+			WHERE 
+				comments.article_id = ?;
+`
 	rows, err := tx.QueryContext(ctx, SQL, articleId)
 	helper.PanicIfErr(err)
 	defer rows.Close()
@@ -60,7 +76,7 @@ func (c CommentRepositoryImpl) FindByArticleID(ctx context.Context, tx *sql.Tx, 
 	var comments []entity.Comment
 	for rows.Next() {
 		var comment entity.Comment
-		err := rows.Scan(&comment.Id, &comment.UserId, &comment.ArticleId, &comment.Comment, &comment.CreatedAt, &comment.UpdatedAt)
+		err := rows.Scan(&comment.Id, &comment.UserId, &comment.ArticleId, &comment.Comment, &comment.CreatedAt, &comment.UpdatedAt, &comment.Author)
 		helper.PanicIfErr(err)
 		comments = append(comments, comment)
 	}

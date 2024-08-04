@@ -41,7 +41,7 @@ func GetUserByToken(c *fiber.Ctx) (config.UserClaims, error) {
 	user := config.UserClaims{}
 
 	if err != nil {
-		return user, HandleTokenError(c)
+		return user, err
 	}
 
 	if claims, ok := token.(*config.UserClaims); ok {
@@ -51,5 +51,5 @@ func GetUserByToken(c *fiber.Ctx) (config.UserClaims, error) {
 		return user, nil
 	}
 
-	return user, HandleTokenError(c)
+	return user, err
 }

@@ -17,7 +17,7 @@ import (
 
 type AuthService interface {
 	Login(ctx context.Context, request request.LoginRequest) string
-	RegisterUser(ctx context.Context, request request.RegisterRequest) response.UserResponse
+	RegisterUser(ctx context.Context, request request.RegisterRequest) response.UserWithProfileResponse
 }
 
 type AuthServicesImpl struct {
@@ -69,7 +69,7 @@ func (service *AuthServicesImpl) Login(ctx context.Context, request request.Logi
 	}
 }
 
-func (service *AuthServicesImpl) RegisterUser(ctx context.Context, request request.RegisterRequest) response.UserResponse {
+func (service *AuthServicesImpl) RegisterUser(ctx context.Context, request request.RegisterRequest) response.UserWithProfileResponse {
 	err := service.Validate.Struct(request)
 	helper.PanicIfErr(err)
 
@@ -89,17 +89,18 @@ func (service *AuthServicesImpl) RegisterUser(ctx context.Context, request reque
 	req.Password = hashedPassword
 
 	userRegister := service.AuthRepository.RegisterUser(ctx, tx, req)
+
 	req.Id = userRegister.Id
 
-	userResponse, _ := service.AuthRepository.GetUserByUsername(ctx, tx, req.Username)
-
-	service.AuthRepository.CreateUserProfileOnRegisterUser(ctx, tx, req.Id)
-
+	service.AuthRepository.CreateUserProfileOnRegisterUser(ctx, tx, req.Id, request.FullName)
 	defaultPhotoProfile := entity.UserProfilePhoto{
 		UserId: req.Id,
 		Path:   "default_profile_photo.svg",
 	}
+
 	service.AuthRepository.CreateUserPhotoProfileOnRegisterUser(ctx, tx, defaultPhotoProfile)
 
-	return helper.ToUserResponse(userResponse)
+	userResponse, _ := service.AuthRepository.GetUserByUsername(ctx, tx, req.Username)
+
+	return helper.ToUserWithProfileResponse(userResponse)
 }

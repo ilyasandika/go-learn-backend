@@ -26,6 +26,25 @@ func ToUserResponses(users []entity.User) []response.UserResponse {
 	return userResponses
 }
 
+func ToUserWithProfileResponse(user entity.UserWithProfile) response.UserWithProfileResponse {
+	return response.UserWithProfileResponse{
+		Id:        user.Id,
+		Username:  user.Username,
+		Profile:   user.Profile,
+		Role:      user.Role,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
+}
+
+func ToUserWithProfileResponses(users []entity.UserWithProfile) []response.UserWithProfileResponse {
+	var userResponses []response.UserWithProfileResponse
+	for _, user := range users {
+		userResponses = append(userResponses, ToUserWithProfileResponse(user))
+	}
+	return userResponses
+}
+
 func ToUserProfileResponse(userProfile entity.UserProfile) response.UserProfileResponse {
 	return response.UserProfileResponse{
 		UserId:      userProfile.UserId,
@@ -62,6 +81,9 @@ func ToArticleResponse(article entity.Article) response.ArticleResponse {
 		UserId:      article.UserId,
 		Title:       article.Title,
 		Description: article.Description,
+		Content:     article.Content,
+		Author:      article.Author,
+		Media:       article.Media,
 		IsPublished: article.IsPublished,
 		CreatedAt:   article.CreatedAt,
 		UpdatedAt:   article.UpdatedAt,
@@ -100,6 +122,7 @@ func ToCommentResponse(comment entity.Comment) response.CommentResponse {
 		UserId:    comment.UserId,
 		ArticleId: comment.ArticleId,
 		Comment:   comment.Comment,
+		Author:    comment.Author,
 		CreatedAt: comment.CreatedAt,
 		UpdatedAt: comment.UpdatedAt,
 	}

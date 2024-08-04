@@ -1,11 +1,10 @@
 package response
 
-type CommentResponse struct {
+type ArticleMediaResponse struct {
 	Id        int    `json:"id"`
-	UserId    int    `json:"user_id"`
 	ArticleId int    `json:"article_id"`
-	Author    string `json:"author"`
-	Comment   string `json:"comment"`
+	Type      string `json:"type"`
+	Path      string `json:"path"`
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 }

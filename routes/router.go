@@ -11,8 +11,8 @@ func SetupUserRoutes(app *fiber.App, controller controllers.UserController) {
 	userGroup := apiGroup.Group("/users")
 	{
 		userGroup.Get("/", middlewares.AdminOnly, controller.FindAll)
+		userGroup.Get("/details", middlewares.AuthRequired, controller.FindByToken)
 		userGroup.Get("/:userId", middlewares.AdminOnly, controller.FindByPath)
-		userGroup.Get("/:userId", middlewares.AuthRequired, controller.FindByPath)
 		userGroup.Put("/:userId", middlewares.AdminOnly, controller.UpdateByPath)
 		userGroup.Put("/", middlewares.AuthRequired, controller.UpdateByToken)
 		userGroup.Delete("/:userId", middlewares.AdminOnly, controller.Delete)
@@ -27,6 +27,7 @@ func SetupAuthRoutes(app *fiber.App, controller controllers.AuthController) {
 		authGroup.Post("/login", middlewares.GuestOnly, controller.Login)
 		authGroup.Post("/logout", middlewares.AuthRequired, controller.Logout)
 		authGroup.Post("/register", middlewares.GuestOnly, controller.Register)
+		authGroup.Post("/verify-auth", controller.VerifyAuth)
 	}
 }
 
@@ -35,9 +36,9 @@ func SetupUserProfileRoutes(app *fiber.App, controller controllers.UserProfileCo
 	userProfileGroup := apiGroup.Group("/user_profiles")
 	{
 		userProfileGroup.Get("/", middlewares.AdminOnly, controller.FindAll)
-		userProfileGroup.Get("/details/:userId", middlewares.AuthRequired, controller.FindByPath)
 		userProfileGroup.Get("/details", middlewares.AuthRequired, controller.FindByToken)
 		userProfileGroup.Put("/details", middlewares.AuthRequired, controller.UpdateByToken)
+		userProfileGroup.Get("/details/:userId", middlewares.AuthRequired, controller.FindByPath)
 
 	}
 }
@@ -55,14 +56,13 @@ func SetupArticlePhotoRoutes(app *fiber.App, controller controllers.ArticleContr
 	apiGroup := app.Group("/api")
 	articleGroup := apiGroup.Group("/articles")
 	{
-		articleGroup.Get("/", middlewares.AdminOnly, controller.FindAll)
-		articleGroup.Post("/", middlewares.UserOnly, controller.CreateByToken)
+		articleGroup.Post("/", middlewares.AuthRequired, controller.CreateByToken)
 		articleGroup.Get("/published", middlewares.AuthRequired, controller.FindAllPublished)
-		articleGroup.Get("/published/users/:userId", middlewares.AuthRequired, controller.FindAllPublishedByUserID)
-		articleGroup.Get("/published/details/:articleId", middlewares.AuthRequired, controller.FindPublishedByID)
+		articleGroup.Put("/published/:articleId", middlewares.AdminOnly, controller.PublishArticle)
+		articleGroup.Get("/published/user", middlewares.UserOnly, controller.FindAllPublishedByUserID)
 		articleGroup.Get("/unpublished", middlewares.AdminOnly, controller.FindAllUnpublished)
-		articleGroup.Get("/unpublished/users/:userId", middlewares.AuthRequired, controller.FindAllUnpublishedByUserID)
-		articleGroup.Get("/users/:userId", middlewares.AuthRequired, controller.FindByUserId)
+		articleGroup.Get("/unpublished/user", middlewares.UserOnly, controller.FindAllUnpublishedByUserID)
+		articleGroup.Put("/unpublished/:articleId", middlewares.AdminOnly, controller.UnpublishArticle)
 		articleGroup.Get("/:articleId", middlewares.AuthRequired, controller.FindByID)
 		articleGroup.Put("/:articleId", middlewares.UserOnly, controller.UpdateByID)
 		articleGroup.Delete("/:articleId", middlewares.AuthRequired, controller.DeleteByID)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2/log"
 	"uaspw2/exception"
 	"uaspw2/helper"
 	"uaspw2/models/entity"
@@ -60,6 +61,7 @@ func (controller *CommentServiceImpl) FindByArticleID(ctx context.Context, artic
 	defer helper.CommitOrRollback(tx)
 
 	comments := controller.CommentRepository.FindByArticleID(ctx, tx, articleId)
+	log.Info(comments)
 
 	return helper.ToCommentResponses(comments)
 }
